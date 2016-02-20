@@ -1,0 +1,35 @@
+body {padding:0; margin:0;text-align:center;font-family:Verdana;font-size:14px;}
+#banniere {height:200px; }
+#logo_menu {float:left; margin-left:10%; height: 100% ;}
+#wrapper_main{max-width:90%; margin:0 auto; margin-bottom:70px;}
+.noMargin{margin:0px;}
+#div_tableTraversee{padding:0; margin:0; margin-bottom: 10px; width:auto;}
+#header_tableTraversee{padding-bottom:0; margin: 40px 0 0; border-bottom:none; text-align:center; margin-bottom:-50px;}
+table {text-align:left;}
+.txt_red{color:red;}
+.white-popup-block {
+    background: #FFF;
+    padding: 20px 30px;
+    text-align: center;
+    max-width: 650px;
+    margin: 40px auto;
+    position: relative;
+}
+.pc{display:inline;}
+.white-popup-block > fieldset > ul {list-style:none; width:60%; margin: 0 auto ;}
+.white-popup-block > fieldset > ul > li {text-align:right;margin-right:30%;}
+.white-popup-block > fieldset > ul > li > input{width:150px;}
+.white-popup-block > fieldset  > a {text-align:center; width:auto; color:white; display:inline-block; background:#629932; padding:16px 25px;}
+.white-popup-block > fieldset  > a:hover {background:#8EB53C;}
+#test-form > fieldset > p {text-align:center;}
+
+#separateur{clear:both; margin-bottom:100px;}
+footer{padding:5px; margin:0; background-color:#2C3E50; color:#BED3E8; position:fixed; bottom:0; width:100%;}
+.footer_TriBlock{width:20%; float:left;}
+#banniereFooter{height:100px;float:right;position:absolute;bottom:0;}
+#bloc_banniereFooter{height:40px;}
+
+@media all and (max-width: 950px) {
+    .pc {display:none;}
+	#wrapper_main {margin: 0; max-width: 100%;}
+}
