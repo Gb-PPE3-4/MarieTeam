@@ -44,39 +44,41 @@
 											<li class="dropdown-submenu">
 												<a href="#" tabindex="0">Ajouter</a>
 												<ul class="dropdown-menu">
-													<li><a href="admin.php?data=secteur&mod=1" tabindex="0">Secteurs</a></li>
-													<li><a href="admin.php?data=liaison&mod=1" tabindex="0">Liaisons</a></li>
-													<li><a href="admin.php?data=periode&mod=1" tabindex="0">Périodes</a></li>
-													<li><a href="admin.php?data=bateau&mod=1" tabindex="0">Bateaux</a></li>
-													<li><a href="admin.php?data=traversee&mod=1" tabindex="0">Traversées</a></li>
-													<li><a href="admin.php?data=tarif&mod=1" tabindex="0">Tarifs</a></li>
+													<li><a href="admin.php?data=secteur_ajout" tabindex="0">Secteurs</a></li>
+													<li><a href="admin.php?data=port_ajout" tabindex="0">Ports</a></li>
+													<li><a href="admin.php?data=liaison_ajout" tabindex="0">Liaisons</a></li>
+													<li><a href="admin.php?data=periode_ajout" tabindex="0">Périodes</a></li>
+													<li><a href="admin.php?data=bateau_ajout" tabindex="0">Bateaux</a></li>
+													<li><a href="admin.php?data=traversee_ajout" tabindex="0">Traversées</a></li>
+													<li><a href="admin.php?data=tarif_ajout" tabindex="0">Tarifs</a></li>
 													<li class="divider"></li>
 												</ul>
 											</li>
 											<li class="dropdown-submenu">
 												<a href="#" tabindex="0">Modifier</a>
 												<ul class="dropdown-menu">
-													<li><a href="admin.php?data=secteur&mod=0" tabindex="0">Secteurs</a></li>
-													<li><a href="admin.php?data=liaison&mod=0" tabindex="0">Liaisons</a></li>
-													<li><a href="admin.php?data=periode&mod=0" tabindex="0">Périodes</a></li>
-													<li><a href="admin.php?data=bateau&mod=0" tabindex="0">Bateaux</a></li>
-													<li><a href="admin.php?data=traversee&mod=0" tabindex="0">Traversées</a></li>
-													<li><a href="admin.php?data=tarif&mod=0" tabindex="0">Tarifs</a></li>
+													<li><a href="admin.php?data=secteur_mod" tabindex="0">Secteurs</a></li>
+													<li><a href="admin.php?data=port_mod" tabindex="0">Ports</a></li>
+													<li><a href="admin.php?data=liaison_mod" tabindex="0">Liaisons</a></li>
+													<li><a href="admin.php?data=periode_mod" tabindex="0">Périodes</a></li>
+													<li><a href="admin.php?data=bateau_mod" tabindex="0">Bateaux</a></li>
+													<li><a href="admin.php?data=traversee_mod" tabindex="0">Traversées</a></li>
+													<li><a href="admin.php?data=tarif_mod" tabindex="0">Tarifs</a></li>
 												</ul>
 											</li>
 											<li class="divider"></li>
 										</ul>
 									</li>
-									<li><a href="admin.php?data=reservation">Réservations</a></li>
+									<li><a href="admin.php?data=reservation_consultation">Réservations</a></li>
 									<li><a href="admin.php?data=mdp">Changer de mot de passe</a></li>	';
 						if($_SESSION['droit'] == 1){			
-							echo'	<li><a href="admin.php?data=modif">Consulter les modifications</a></li>
+							echo'	<li><a href="admin.php?data=modif_consultation">Consulter les modifications</a></li>
 									<li><a  href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 										Administrer les utilisateurs <span class="caret"></span>
 									</a>
 										<ul class="dropdown-menu">
-											<li><a href="admin.php?data=user&mod=1">Ajouter un utilisateur</a></li>
-											<li><a href="admin.php?data=user&mod=0">Modifier un utilisateur</a></li>
+											<li><a href="admin.php?data=user_ajout">Ajouter un utilisateur</a></li>
+											<li><a href="admin.php?data=user_mod">Modifier un utilisateur</a></li>
 											<li role="separator" class="divider"></li>
 										</ul>
 									</li>';

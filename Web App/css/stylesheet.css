@@ -29,6 +29,24 @@ footer{padding:5px; margin:0; background-color:#2C3E50; color:#BED3E8; position:
 #banniereFooter{height:100px;float:right;position:absolute;bottom:0;}
 #bloc_banniereFooter{height:40px;}
 
+.bfret_form{display:none;}
+
+.btn-reddish{ background-color:#D10E0E; font-weight:bold; color:white; }
+.btn-blueish{ background-color:#0066CC; font-weight:bold; color:white; }
+
+.bloc_reservation{
+	background-color:#F3F3F3;
+	margin:15px auto;
+	width:50%;
+	padding:10px 30px;
+	
+	-moz-box-shadow: 1px 1px 5px 1px grey;
+    -webkit-box-shadow: 1px 1px 5px 1px grey;
+    -o-box-shadow: 1px 1px 5px 1px grey;
+    box-shadow: 1px 1px 5px 1px grey;
+    filter: progid:DXImageTransform.Microsoft.Shadow(color=grey, Direction=134, Strength=15);
+}
+
 @media all and (max-width: 950px) {
     .pc {display:none;}
 	#wrapper_main {margin: 0; max-width: 100%;}
