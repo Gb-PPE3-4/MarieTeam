@@ -1,102 +1,94 @@
 <?PHP
-	$lignes = 'Désolé, le site vient de rencontrerune erreur.' ;
+	$lignes = 'Désolé, le site vient de rencontrer une erreur.' ;
 
-	if(isset($_POST['select_bateau']) && $_POST['select_bateau'] != ""){$choixBateau = $_POST['select_bateau'] ;}else{$choixBateau = '' ;}
+	/******* RECUPERATION DES VALEURS & INIT  *******/
 	
-	if(isset($_GET['mod'])){
-		if($_GET['mod'] == 0 && $_GET['mod'] == 0){
+		/**** FORM UPDATE BATEAU ****/
+		if(isset($_POST['select_Choix']) && $_POST['select_Choix'] != ""){
 			
-							$lignes = '
-							<form method="post" class="form-horizontal">
-									  <legend>Choisissez un bateau à modifier :</legend>
-								  <fieldset>
-									<div class="form-group">
-									  <div class="col-lg-3">
-										<select class="form-control" name="select_bateau" id="select_bateau">' ;
-							
-							$stmt = retourneStatementSelect('SELECT idbateau, nom FROM bateau') ;
-							while( $resultat = $stmt->fetch(PDO::FETCH_ASSOC) ){
-								if($choixBateau == $resultat['idbateau']){$selected = 'selected' ;}else{$selected = '' ;}
-								$lignes .= '	<option value="'.$resultat['idbateau'].'" '.$selected.'>'.$resultat['nom'].'</option>';
-							}
-							$stmt = null ;
-							
-							$lignes .= '
-										</select>
-									  </div>
-									  <div class="col-lg-3">
-										<button type="submit" class="btn btn-primary">Valider</button>
-									  </div>
-									</div>
-								  </fieldset>
-							</form>';
-							echo $lignes ;
-			
-		}
-		if($_GET['mod'] == 1 || ($_GET['mod'] == 0 && $choixBateau != '')){
-			
-							$stmt = retourneStatementSelect('SELECT idbateau, nom, longueurBat, largeurBat, heritage FROM bateau WHERE idbateau ='.$choixBateau) ;
-							$resultat = $stmt->fetch(PDO::FETCH_ASSOC);
-								if($resultat['heritage'] == 0){$table = 'bvoyageur' ;}else{$table = 'bfret' ;}
-								$stmtHeritage = retourneStatementSelect('SELECT * FROM '.$table.' WHERE idbateau ='.$choixBateau) ;
-								$resultatHeritage = $stmtHeritage->fetch(PDO::FETCH_ASSOC);
-							
-							
+			$ID = $_POST['select_Choix'] ;		$selVoy = "" ; $selFret = "" ;
+			$stmtSecteur = retourneStatementSelect('SELECT idbateau, nom, longueurBat, largeurBat, heritage FROM bateau WHERE idbateau='.$ID) ;
+			while( $resultatSecteur = $stmtSecteur->fetch(PDO::FETCH_ASSOC) ){
+				$NOM = $resultatSecteur['nom'] ;
+				$LONG = $resultatSecteur['longueurBat'] ;
+				$LARG = $resultatSecteur['largeurBat'] ;
+				if($resultatSecteur['heritage'] == 0){ $selVoy = 'selected="selected"' ; $selFret = "" ;}
+				else if($resultatSecteur['heritage'] == 1){ $selFret = 'selected="selected"' ; $selVoy = "" ;}
+			}	
 			$lignes = '
-							<br><form method="post" class="form-horizontal">
+							<form method="post" id="update_bateau_form" class="form-horizontal col-lg-4">
+									  <legend>Ajoutez un bateau</legend>
 								  <fieldset>	
 									<div class="form-group">
-									  <label for="input_nom" class="col-lg-2 control-label">Nom</label>
-									  <div class="col-lg-6">
-										<input type="text" class="form-control" name = "input_nom" id="input_nom" value="'.$resultat['nom'].'">
+									  <label for="input_nom" class="control-label">Nom</label>
+									  <div>
+										<input type="text" class="form-control" name = "input_nom" id="input_nom" value="'.$NOM.'">
 									  </div>
 									</div>
 									<div class="form-group">
-									  <label for="input_nom" class="col-lg-2 control-label">Longueur du bateau</label>
-									  <div class="col-lg-6">
-										<input type="number" class="form-control" name = "input_longueurBat" id="input_longueurBat" value="'.$resultat['longueurBat'].'">
+									  <label for="input_longueurBat" class="control-label">Longueur du bateau</label>
+									  <div>
+										<input type="number" class="form-control" name = "input_longueurBat" id="input_longueurBat" value="'.$LONG.'">
 									  </div>
 									</div>
 									<div class="form-group">
-									  <label for="input_nom" class="col-lg-2 control-label">Largeur du bateau</label>
-									  <div class="col-lg-6">
-										<input type="number" class="form-control" name = "input_largeurBat" id="input_largeurBat" 	value="'.$resultat['largeurBat'].'">
-									  </div>
-									</div>';
-
-			if($table == 'bvoyageur'){
-				$lignes .= '		<div class="form-group">
-									  <label for="input_nom" class="col-lg-2 control-label">Image du bateau</label>
-									  <div class="col-lg-6">
-										<input type="text" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="'.$resultatHeritage['imageBatVoyageur'].'">
+									  <label for="input_largeurBat" class="control-label">Largeur du bateau</label>
+									  <div>
+										<input type="number" class="form-control" name = "input_largeurBat" id="input_largeurBat" 	value="'.$LARG.'">
 									  </div>
 									</div>
 									<div class="form-group">
-									  <label for="input_nom" class="col-lg-2 control-label">Vitesse en noeuds</label>
-									  <div class="col-lg-6">
-										<input type="number" class="form-control" name = "input_vitesseBatVoy" id="input_vitesseBatVoy" value="'.$resultatHeritage['vitesseBatVoy'].'">
+									  <div>
+									    <label for="select_typebat" control-label">Type de bateau</label>
+										<select class="form-control" name="select_typebat" id="select_typebat">
+											<option '.$selVoy.' value="0">Voyageurs</option>
+											<option '.$selFret.' value="1">Fret</option>
+										</select>
 									  </div>
 									</div>
-							';
-			}else{
-				$lignes .= '		<div class="form-group">
-									  <label for="input_nom" class="col-lg-2 control-label">Poids supporté en Kg</label>
-									  <div class="col-lg-6">
-										<input type="number" class="form-control" name = "input_poidsMaxFret" id="input_poidsMaxFret" value="'.$resultatHeritage['poidsMaxBatFret'].'">
+									<div class="form-group bvoyageur_form">
+									  <label for="input_imageBatVoyageur" class="control-label">Image du bateau</label>
+									  <div>
+										<input type="file" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="">
 									  </div>
 									</div>
-							';
-			}
-			
-			$lignes .= '
-									  <div class="col-lg-16">
+									<div class="form-group bvoyageur_form">
+									  <label for="input_vitesseBatVoy" class="control-label">Vitesse en noeuds</label>
+									  <div>
+										<input type="number" class="form-control" name = "input_vitesseBatVoy" id="input_vitesseBatVoy" value="">
+									  </div>
+									</div><div class="form-group bfret_form">
+									  <label for="input_poidsMaxFret" class="control-label">Poids supporté en Kg</label>
+									  <div>
+										<input type="number" class="form-control" name = "input_poidsMaxFret" id="input_poidsMaxFret" value="">
+									  </div>
+									</div>
+									<div>
 										<button type="submit" class="btn btn-primary">Valider</button>
 									  </div>
-								  </fieldset>
+								  </fieldset><br>
+								  <span id="updt_bateau_msg"></span>
 							</form>';
-							
-			
+								
 			echo $lignes ;
+		}else{
+			/**** FORM SELECT ID ******/
+			$lignesFormChoix = '<form method="post" class="form-horizontal">
+									<legend>Choisissez un secteur à modifier</legend>
+									<fieldset class="col-lg-4">
+									<div class="form-group">
+										<select class="form-control" name="select_Choix" id="select_Choix">' ;
+										
+			$stmt = retourneStatementSelect('SELECT idbateau, nom, longueurBat, largeurBat, heritage FROM bateau') ;
+			while( $resultat = $stmt->fetch(PDO::FETCH_ASSOC) ){
+				$lignesFormChoix .= '			<option value="'.$resultat['idbateau'].'">'.$resultat['nom'].'</option>';
+			}			
+			$lignesFormChoix .= '		</select>
+									</div>
+									<div>
+										<button type="submit" class="btn btn-blueish">Modifier cet élément</button>
+									</div>
+								</form>' ;
+			echo $lignesFormChoix ;
 		}
-	}	
 ?>
