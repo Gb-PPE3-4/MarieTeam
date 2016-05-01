@@ -1,16 +1,38 @@
-
+/**
+ * <b>Equipement classe représentant un equipement.</b>
+ * <p>
+ * <ul>
+ * <li>Un identifiant.</li>
+ * <li>Un libelle.</li>
+ * </ul>
+ * </p>
+ * 
+ * @author pierre vandesompele, raphael polowczak, robin faure
+ */
 public class Equipement {
 	
 	private int idEquip;
 	private String libEquip;
-	
-	// Constructeur avec ID, LIBELLE
+
+    /**
+     * Constructeur Equipement.
+     * 
+     * @param unIdEquip
+     *            L'identifiant unique de l'equipement.
+     * @param unLibelle
+     *            Le nom.
+     */
 	public Equipement(int unIdEquip, String unLibEquip){
 		idEquip = unIdEquip ;
 		libEquip = unLibEquip ;
 	}
-	
-	// Renvoie une chaine appropriee pour le PDF avec le libelle EQUIPEMENT
+
+    /**
+     * Renvoie une chaine appropriee pour le PDF avec le libelle EQUIPEMENT.
+     * 
+     * @return Renvoie une chaine appropriee pour le PDF avec le libelle EQUIPEMENT.
+     * 
+     */
 	public String toString(){
 		String resultat = new String() ;
 		if(this.libEquip != "" && this.libEquip != null){
