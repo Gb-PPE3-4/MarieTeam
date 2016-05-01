@@ -37,4 +37,5 @@
 	 
 	<!-- Script -->
 	<script language="javascript" src="includes/js.js"></script>
+	<script language="javascript" src="includes_adm/adm_js.js"></script>
 </body></html>
