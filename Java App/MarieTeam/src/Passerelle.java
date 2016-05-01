@@ -1,9 +1,19 @@
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+/**
+ * <b>Passerelle classe technique réalisant le lien entre les classes techniques et métiers.</b>
+ * 
+ * @author pierre vandesompele, raphael polowczak, robin faure
+ */
 public class Passerelle {
-	
-	// Renvoie tous les equipements du bateau dont l'identifiant est passé en parametre
+
+    /**
+     * Renvoie tous les equipements du bateau dont l'identifiant est passé en parametre
+     * 
+     * @param unIdBateau
+     *            L'identifiant du navire.
+     * *@return Une collection (arraylist) d'instances de la classe Equipement.
+     */
     public ArrayList<Equipement> chargerLesEquipements(int unIdBateau) throws ClassNotFoundException, SQLException{
     	ArrayList<Equipement> lesEquip = new ArrayList<Equipement>();
         jeuEnregistrement jEnr = new jeuEnregistrement("SELECT `er`.idequip, `et`.libequip FROM `equiper` er LEFT JOIN `equipement` et ON er.idequip = et.idequip WHERE `er`.idbateau = " + unIdBateau) ;
@@ -13,8 +23,12 @@ public class Passerelle {
         jEnr.fermer();
     	return lesEquip;
     }
-    
-    // Charge une collection de tous les bateaux voyageurs avec leur equipement
+
+    /**
+     * Charge une collection de tous les bateaux voyageurs avec leur equipement
+     * 
+     * *@return Une collection (arraylist) d'instances de la classe BateauVoyageur.
+     */
     public ArrayList<BateauVoyageur> chargerLesBatVoy() throws SQLException, ClassNotFoundException{
     	ArrayList<BateauVoyageur> lesBateaux = new ArrayList<BateauVoyageur>() ;
     	BateauVoyageur monBatVoy ;

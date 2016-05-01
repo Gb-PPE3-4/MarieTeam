@@ -1,29 +1,66 @@
 import java.util.*;
-
-
+/**
+ * <b>BateauVoyageur classe représentant un bateau de voyageur et ses attributs spécifiques (avec héritage de Bateau)</b>
+ * <p>
+ * Un bateau voyageur est caractérisé par les informations suivantes :
+ * <ul>
+ * <li>Une vitesse en noeuds.</li>
+ * <li>Une image.</li>
+ * <li>Une collection d'instances de classe Equipement.</li>
+ * </ul>
+ * </p>
+ * 
+ * @author pierre vandesompele, raphael polowczak, robin faure
+ */
 public class BateauVoyageur extends Bateau {
 	
 	private String vitesseBatVoy ;
 	private String imageBatVoyageur ;
 	private ArrayList<Equipement> collEquip = new ArrayList<Equipement>() ;
 	
-	// Constructeur VIDE
+    /**
+     * Constructeur BateauVoyageur vide.
+     */
 	public BateauVoyageur() {
 		super();
 		vitesseBatVoy = new String() ;
 		imageBatVoyageur = new String() ;
 		collEquip = new ArrayList<Equipement>() ;
 	}
-
-	// Constructeur avec SUPER, VITESSE, IMG
-	public BateauVoyageur(int unId, String unNom, String uneLongeur,String uneLargeur, int unHeritage,String uneVitesse,String uneImage,ArrayList uneCollEquip) {
-		super(unId, unNom, uneLongeur, uneLargeur, unHeritage);
+	
+    /**
+     * Constructeur Bateau.
+     * 
+     * @param id
+     *            L'identifiant unique du Bateau.
+     * @param nom
+     *            Le nom.
+     * @param uneLongueur
+     *            Longueur.
+     * @param uneLargeur
+     *            La largeur.
+     * @param unHeritage
+     *            L'entier représente l'héritage batea (0 pour voyageur, 1 pour fret).
+     * @param uneVitesse
+     *            La vitesse du bateau de voyageurs.
+     * @param uneImage
+     *            La photo du navire.
+     * @param uneCollEquip
+     *            La collection d'instances de classe Equipement.
+     */
+	public BateauVoyageur(int unId, String unNom, String uneLongueur,String uneLargeur, int unHeritage,String uneVitesse,String uneImage, ArrayList uneCollEquip) {
+		super(unId, unNom, uneLongueur, uneLargeur, unHeritage);
 		vitesseBatVoy = uneVitesse;
 		imageBatVoyageur = uneImage ;
 		collEquip = uneCollEquip ;
 	}
 
-	// Renvoie une chaine appropriee pour le PDF avec tous les attributs BVOYAGEUR avec SUPER
+    /**
+     * Renvoie une chaine appropriee pour le PDF avec tous les attributs BVOYAGEUR avec SUPER.
+     * 
+     * @return Renvoie une chaine appropriee pour le PDF avec tous les attributs BVOYAGEUR avec SUPER.
+     * 
+     */
 	public String toString(){
 		String resultat = new String() ;
 		String mot1 = "Vitesse : " + vitesseBatVoy + " noeuds." ; 
