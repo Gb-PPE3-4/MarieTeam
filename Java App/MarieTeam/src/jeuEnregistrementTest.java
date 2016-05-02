@@ -1,3 +1,4 @@
+
 import static org.junit.Assert.*;
 
 import org.junit.Before;
@@ -17,7 +18,7 @@ public class jeuEnregistrementTest {
 	public void testFin() {
 		try{
 			setUp();
-			assertTrue("Erreur de conversion en chaine de caractères", jEnr.fin() == true || jEnr.fin() == false);
+			assertTrue("Erreur de conversion en chaine de caractères", (jEnr.fin() == true || jEnr.fin() == false));
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 		}
@@ -28,7 +29,8 @@ public class jeuEnregistrementTest {
 		try{
 			setUp();
 			jEnr.suivant() ;
-			assertTrue("Erreur de conversion en chaine de caractères", jEnr.getValeur("libequip") instanceof String);
+			assertTrue("Erreur de rrécupération de la donnée en chaine de caractères", 
+					jEnr.getValeur("libequip") instanceof String);
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 		}

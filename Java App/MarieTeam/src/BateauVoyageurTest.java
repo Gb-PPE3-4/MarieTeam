@@ -1,5 +1,6 @@
 
 
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class BateauVoyageurTest {
 		Equipement unEquipmt = new Equipement(2, "unEquipement") ;
 		ArrayList<Equipement> lstEq = new ArrayList<Equipement>() ;
 		lstEq.add(unEquipmt) ;
-		BateauVoyageur bVTest = new BateauVoyageur(15,"batVTest", "13", "7", 0, "13.5", "blabla", lstEq) ;
+		bVTest = new BateauVoyageur(15,"batVTest", "13", "7", 0, "13.5", "blabla", lstEq) ;
 	}
 
 	@Test
