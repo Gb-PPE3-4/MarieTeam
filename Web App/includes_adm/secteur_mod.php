@@ -30,6 +30,7 @@
 										</div>
 									  </fieldset><br>
 									  <span id="updt_secteur_msg"></span>
+									  <span id="del_msg"></span>
 								</form>';
 								
 			echo $lignes ;

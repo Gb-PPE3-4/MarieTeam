@@ -5,18 +5,52 @@ $(window).load(function(){
 	// DELETE POUR TOUS LES TUPLES
 	$("#del_choix").click(function(){
 		if($("#input_id").val() != ""){
-			$.ajax({
+			if($('#input_id').attr('table') == 'bateau'){
+				//del bateau heritage puis bateau
+				var table = "" ;
+				if($("#select_typebat").val() == '1'){
+					table = "bfret" ;
+				}else if($("#select_typebat").val() == '0'){
+					table = "bvoyageur" ;
+				}
+				$.ajax({
 						url: 'includes/functions.php',
 						type:'POST',
 						data: {
 							fonction:'delTuple',
-							params: {ID:$('#input_id').val(), TABLE:$('#input_id').attr('table'), CHAMPS_ID:$('#input_id').attr('champs_id')}
+							params: {ID:$('#input_id').val(), TABLE:table, CHAMPS_ID:'idbateau'}
 						},
 						success: function(data)
 						{
-							$("#crea_secteur_msg").html("Les données ont bien été supprimées.");
+							$.ajax({
+										url: 'includes/functions.php',
+										type:'POST',
+										data: {
+											fonction:'delTuple',
+											params: {ID:$('#input_id').val(), TABLE:'bateau', CHAMPS_ID:'idbateau'}
+										},
+										success: function(data)
+										{
+											$("#del_msg").html("Les données ont bien été supprimées.");
+										}
+							 });
 						}
-			 });
+				});
+			}else{			
+				// del generique
+				$.ajax({
+							url: 'includes/functions.php',
+							type:'POST',
+							data: {
+								fonction:'delTuple',
+								params: {ID:$('#input_id').val(), TABLE:$('#input_id').attr('table'), CHAMPS_ID:$('#input_id').attr('champs_id')}
+							},
+							success: function(data)
+							{
+								$("#del_msg").html("Les données ont bien été supprimées.");
+							}
+				 });
+			}
 		}
 	});
 	
@@ -24,14 +58,74 @@ $(window).load(function(){
 	$("#select_typebat").change(function(){
 		
 		if($("#select_typebat").val() == '0'){
-			$("#input_poidsMaxFret").val("") ;
+			//$("#input_poidsMaxFret").val("") ;
 			$(".bvoyageur_form").show() ;
 			$(".bfret_form").hide() ;
 		}else if($("#select_typebat").val() == '1'){
-			$("#input_imageBatVoyageur").val("") ; 
-			$("#input_vitesseBatVoy").val("") ;
+			/*$("#input_imageBatVoyageur").val("") ; 
+			$("#input_vitesseBatVoy").val("") ;*/
 			$(".bvoyageur_form").hide() ;
 			$(".bfret_form").show() ;
+		}
+	});
+	// CREATE MEMBRE
+	$("#creation_membre_form").submit(function(e){
+		e.preventDefault();
+		if($("#input_login").val() != "" && $("#input_nom").val() != "" && $("#input_prenom").val() != "" && $("#input_mail").val() != "" && $("#input_droit").val() != "" && ($("#input_droit").val() == "1" || $("#input_droit").val() == "0")){
+			$.ajax({
+						url: 'includes/functions.php',
+						type:'POST',
+						data: {
+							fonction:'createMembre',
+							params: {login:$('#input_login').val(),nom:$('#input_nom').val(),prenom:$('#input_prenom').val(),mail:$('#input_mail').val(),droit:$('#input_droit').val()}
+						},
+						success: function(data)
+						{
+							$(crea_membre_msg).html("Les nouvelles données ont bien été enregistrées.");
+						}
+			 });
+		}else{
+			$("#crea_membre_msg").html("Vous n'avez pas rempli les champs nécessaires.");
+		}
+	});
+	// UPDATE MEMBRE
+	$("#update_membre_form").submit(function(e){
+		e.preventDefault();
+		if($("#input_login").val() != "" && $("#input_nom").val() != "" && $("#input_prenom").val() != "" && $("#input_mail").val() != "" && $("#input_droit").val() != "" && ($("#input_droit").val() == "1" || $("#input_droit").val() == "0")){
+			$.ajax({
+						url: 'includes/functions.php',
+						type:'POST',
+						data: {
+							fonction:'updateMembre',
+							params: {id:$('#input_id').val(),login:$('#input_login').val(),nom:$('#input_nom').val(),prenom:$('#input_prenom').val(),mail:$('#input_mail').val(),droit:$('#input_droit').val()}
+						},
+						success: function(data)
+						{
+							$("#updt_membre_msg").html("Les nouvelles données ont bien été enregistrées.");
+						}
+			 });
+		}else{
+			$("#updt_membre_msg").html("Vous n'avez pas rempli les champs nécessaires.");
+		}
+	});
+	// UPDATE SELF PASSWORD
+	$("#update_mdp_form").submit(function(e){
+		e.preventDefault();
+		if($("#input_mdp").val() != ""){
+			$.ajax({
+						url: 'includes/functions.php',
+						type:'POST',
+						data: {
+							fonction:'updatePassword',
+							params: {id:$('#input_id').val(),mdp:$('#input_mdp').val()}
+						},
+						success: function(data)
+						{
+							$("#updt_mdp_msg").html("Les nouvelles données ont bien été enregistrées.");
+						}
+			 });
+		}else{
+			$("#updt_mdp_msg").html("Vous n'avez pas rempli les champs nécessaires.");
 		}
 	});
 	// CREATE SECTEUR
@@ -94,6 +188,26 @@ $(window).load(function(){
 			$("#crea_port_msg").html("Vous n'avez pas rempli les champs nécessaires.");
 		}
 	});
+	// UPDATE PORT
+	$("#update_port_form").submit(function(e){
+		e.preventDefault();
+		if($("#input_nom").val() != ""){
+			$.ajax({
+						url: 'includes/functions.php',
+						type:'POST',
+						data: {
+							fonction:'updatePort',
+							params: {idport:$('#input_id').val(), nom:$('#input_nom').val()}
+						},
+						success: function(data)
+						{
+							$("#updt_port_msg").html("Les nouvelles données ont bien été enregistrées.");
+						}
+			 });
+		}else{
+			$("#updt_port_msg").html("Vous n'avez pas rempli les champs nécessaires.");
+		}
+	});
 	// CREATE PERIODE
 	$("#create_periode_form").submit(function(e){
 		e.preventDefault();
@@ -134,6 +248,26 @@ $(window).load(function(){
 			 });
 		}else{
 			$("#crea_liaison_msg").html("Vous n'avez pas rempli les champs nécessaires.");
+		}
+	});
+	// UPDATE LIAISON
+	$("#update_liaison_form").submit(function(e){
+		e.preventDefault();
+		if($("#select_secteur").val() != "" && $("#select_depart").val() != "" && $("#select_arrivee").val() != "" && $("#input_dist").val() != ""){
+			$.ajax({
+						url: 'includes/functions.php',
+						type:'POST',
+						data: {
+							fonction:'updateLiaison',
+							params: {code:$('#input_code').val(), idsecteur:$("#select_secteur").val(), idportdepart:$("#select_depart").val(), idportarrivee:$("#select_arrivee").val(), distance:$("#input_dist").val()}
+						},
+						success: function(data)
+						{
+							$("#updt_liaison_msg").html("Les nouvelles données ont bien été enregistrées.");
+						}
+			 });
+		}else{
+			$("#updt_liaison_msg").html("Vous n'avez pas rempli les champs nécessaires.");
 		}
 	});
 	// CREATE BATEAU
