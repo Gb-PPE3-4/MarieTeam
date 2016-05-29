@@ -457,6 +457,10 @@
 		$ResDate = explode('-',$date) ;															// le format DATE JJ/MM/AAAA utilisé par l'user
 		return $ResDate[2].'/'.$ResDate[1].'/'.$ResDate[0] ;									// -> Utilisée pour la lecture de la date dans l'IHM
 	}
+	function setTimestampFormatLecture($date){
+		$RES = explode(' ',$date) ;
+		return setDateFormatLecture($RES[0]).' à '.$RES[1] ;
+	}
 	
 	
 	/******** ADMINISTRATION ********/
@@ -501,6 +505,57 @@
 		return $deb.' -/- '.$fin ;
 	}
 	
+	function createMembre($data){
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("INSERT INTO membre (login, nom, prenom, mail, droit) VALUES (:login, :nom, :prenom, :mail, :droit)");
+		$stmt->bindParam(':login', $login);
+		$login = $data['params']['login'] ;
+		$stmt->bindParam(':nom', $nom);
+		$nom = $data['params']['nom'] ;
+		$stmt->bindParam(':prenom', $prenom);
+		$prenom = $data['params']['prenom'] ;
+		$stmt->bindParam(':mail', $mail);
+		$mail = $data['params']['mail'] ;
+		$stmt->bindParam(':droit', $droit);
+		$droit = $data['params']['droit'] ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
+	function updateMembre($data){
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE membre SET login=:login, nom =:nom, prenom =:prenom, mail =:mail, droit =:droit WHERE id=:id") ;
+		
+		$stmt->bindParam(':id', $id) ;
+		$id = $data['params']['id'] ;
+		$stmt->bindParam(':login', $login);
+		$login = $data['params']['login'] ;
+		$stmt->bindParam(':nom', $nom);
+		$nom = $data['params']['nom'] ;
+		$stmt->bindParam(':prenom', $prenom);
+		$prenom = $data['params']['prenom'] ;
+		$stmt->bindParam(':mail', $mail);
+		$mail = $data['params']['mail'] ;
+		$stmt->bindParam(':droit', $droit);
+		$droit = $data['params']['droit'] ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
+	function updatePassword($data){
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE membre SET mdp=:mdp WHERE id=:id") ;
+		$stmt->bindParam(':id', $id) ;
+		$id = $data['params']['id'] ;
+		$stmt->bindParam(':mdp', $mdp);
+		$mdp = $data['params']['mdp'] ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
 	function createSecteur($data){
 		$base = connexion() ;
 		
@@ -534,6 +589,19 @@
 		
 		$base = null ;
 	}
+	function updatePort($data){
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE port SET nom =:nom WHERE idport=:idport") ;
+		
+		$stmt->bindParam(':idport', $idport) ;
+		$idport = $data['params']['idport'] ;
+		$stmt->bindParam(':nom', $nom) ;
+		$nom = $data['params']['nom'] ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
 	function createPeriode($data){
 		$base = connexion() ;
 		
@@ -560,6 +628,25 @@
 		$arr = $data['params']['idportarrivee'] ;
 		$stmt->bindParam(':dist', $dist);
 		$dist = $data['params']['distance'] ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
+	function updateLiaison($data){
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE liaison SET idsecteur =:idsecteur, idportdepart=:idportdepart, idportarrivee=:idportarrivee, distance=:distance WHERE code=:code") ;
+		
+		$stmt->bindParam(':code', $code) ;
+		$code = $data['params']['code'] ;
+		$stmt->bindParam(':idsecteur', $idsecteur) ;
+		$idsecteur = $data['params']['idsecteur'] ;
+		$stmt->bindParam(':idportdepart', $idportdepart) ;
+		$idportdepart = $data['params']['idportdepart'] ;
+		$stmt->bindParam(':idportarrivee', $idportarrivee) ;
+		$idportarrivee = $data['params']['idportarrivee'] ;
+		$stmt->bindParam(':distance', $distance) ;
+		$distance = $data['params']['distance'] ;
 		$stmt->execute();
 		
 		$base = null ;

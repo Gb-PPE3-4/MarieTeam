@@ -6,19 +6,44 @@
 		/**** FORM UPDATE BATEAU ****/
 		if(isset($_POST['select_Choix']) && $_POST['select_Choix'] != ""){
 			
-			$ID = $_POST['select_Choix'] ;		$selVoy = "" ; $selFret = "" ;
-			$stmtSecteur = retourneStatementSelect('SELECT idbateau, nom, longueurBat, largeurBat, heritage FROM bateau WHERE idbateau='.$ID) ;
-			while( $resultatSecteur = $stmtSecteur->fetch(PDO::FETCH_ASSOC) ){
-				$NOM = $resultatSecteur['nom'] ;
-				$LONG = $resultatSecteur['longueurBat'] ;
-				$LARG = $resultatSecteur['largeurBat'] ;
-				if($resultatSecteur['heritage'] == 0){ $selVoy = 'selected="selected"' ; $selFret = "" ;}
-				else if($resultatSecteur['heritage'] == 1){ $selFret = 'selected="selected"' ; $selVoy = "" ;}
+			$ID = $_POST['select_Choix'] ;		$selVoy = "" ; $selFret = "" ;		$table = "" ;
+			$stmtBateau = retourneStatementSelect('SELECT idbateau, nom, longueurBat, largeurBat, heritage FROM bateau WHERE idbateau='.$ID) ;
+			while( $resultatBateau = $stmtBateau->fetch(PDO::FETCH_ASSOC) ){
+				$NOM = $resultatBateau['nom'] ;
+				$LONG = $resultatBateau['longueurBat'] ;
+				$LARG = $resultatBateau['largeurBat'] ;
+				if($resultatBateau['heritage'] == 0){ 
+					$selVoy = 'selected="selected"' ; $selFret = "" ; $table = "bvoyageur" ;
+					$styleBF = 'style="display:none"' ; 
+					$styleBV = 'style="display:block"' ; 
+					
+				}else if($resultatBateau['heritage'] == 1){ 
+					$selFret = 'selected="selected"' ; $selVoy = "" ; $table = "bfret" ;
+					$styleBF = 'style="display:block"' ; 
+					$styleBV = 'style="display:none"' ; 
+				}
 			}	
+				// initialisation des vars des tables héritages
+				$PDSMAX = "" ;
+				$IMG = "" ;
+				$VITESSE = "" ;
+				
+				$stmtHerit = retourneStatementSelect('SELECT * FROM '.$table.' WHERE idbateau='.$ID) ;
+				while( $resultatHerit = $stmtHerit->fetch(PDO::FETCH_ASSOC) ){
+					if($table == "bfret"){ 
+						$PDSMAX = $resultatHerit['poidsMaxBatFret'] ; 
+					}else{
+						$IMG = $resultatHerit['imageBatVoyageur'] ;
+						$VITESSE = $resultatHerit['vitesseBatVoy'] ;
+					}
+				}
 			$lignes = '
 							<form method="post" id="update_bateau_form" class="form-horizontal col-lg-4">
-									  <legend>Ajoutez un bateau</legend>
+									  <legend>Modifier un bateau</legend>
 								  <fieldset>	
+										  <div>
+											<input type="hidden" class="form-control" table = "bateau" champs_id ="idbateau" name = "input_id" id="input_id" value="'.$ID.'">
+										  </div>
 									<div class="form-group">
 									  <label for="input_nom" class="control-label">Nom</label>
 									  <div>
@@ -46,28 +71,31 @@
 										</select>
 									  </div>
 									</div>
-									<div class="form-group bvoyageur_form">
+									<div '.$styleBV.' class="form-group bvoyageur_form">
 									  <label for="input_imageBatVoyageur" class="control-label">Image du bateau</label>
 									  <div>
-										<input type="file" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="">
+										<input type="file" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="'.$IMG.'">
 									  </div>
 									</div>
-									<div class="form-group bvoyageur_form">
+									<div '.$styleBV.' class="form-group bvoyageur_form">
 									  <label for="input_vitesseBatVoy" class="control-label">Vitesse en noeuds</label>
 									  <div>
-										<input type="number" class="form-control" name = "input_vitesseBatVoy" id="input_vitesseBatVoy" value="">
+										<input type="text" class="form-control" name = "input_vitesseBatVoy" id="input_vitesseBatVoy" value="'.$VITESSE.'">
 									  </div>
-									</div><div class="form-group bfret_form">
+									</div>
+									<div '.$styleBF.' class="form-group bfret_form">
 									  <label for="input_poidsMaxFret" class="control-label">Poids supporté en Kg</label>
 									  <div>
-										<input type="number" class="form-control" name = "input_poidsMaxFret" id="input_poidsMaxFret" value="">
+										<input type="text" class="form-control" name = "input_poidsMaxFret" id="input_poidsMaxFret" value="'.$PDSMAX.'">
 									  </div>
 									</div>
 									<div>
-										<button type="submit" class="btn btn-primary">Valider</button>
+										<button type="submit" class="btn btn-blueish">Valider</button>
+										<a id="del_choix" class="btn btn-reddish">Supprimer</a>
 									  </div>
 								  </fieldset><br>
 								  <span id="updt_bateau_msg"></span>
+									  <span id="del_msg"></span>
 							</form>';
 								
 			echo $lignes ;
