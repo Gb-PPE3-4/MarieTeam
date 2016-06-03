@@ -34,7 +34,7 @@
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<?PHP 
-					if(isset($_SESSION['ID'])  && $_SESSION['droit'] != "" && $_SESSION['droit'] != null){
+					if(isset($_SESSION['ID'])  && $_SESSION['droit'] != "" && $_SESSION['droit'] != null && $_SESSION['ID'] != null){
 						echo '	<ul class="nav navbar-nav">
 									<li class="dropdown">
 										<a href="#" tabindex="0" data-toggle="dropdown" data-submenu="">
@@ -49,6 +49,7 @@
 													<li><a href="admin.php?data=liaison_ajout" tabindex="0">Liaisons</a></li>
 													<li><a href="admin.php?data=periode_ajout" tabindex="0">Périodes</a></li>
 													<li><a href="admin.php?data=bateau_ajout" tabindex="0">Bateaux</a></li>
+													<li><a href="admin.php?data=equipement_ajout" tabindex="0">Equipements</a></li>
 													<li><a href="admin.php?data=traversee_ajout" tabindex="0">Traversées</a></li>
 													<li><a href="admin.php?data=tarif_ajout" tabindex="0">Tarifs</a></li>
 													<li class="divider"></li>
@@ -62,11 +63,13 @@
 													<li><a href="admin.php?data=liaison_mod" tabindex="0">Liaisons</a></li>
 													<li><a href="admin.php?data=periode_mod" tabindex="0">Périodes</a></li>
 													<li><a href="admin.php?data=bateau_mod" tabindex="0">Bateaux</a></li>
+													<li><a href="admin.php?data=equipement_mod" tabindex="0">Equipements</a></li>
 													<li><a href="admin.php?data=traversee_mod" tabindex="0">Traversées</a></li>
 													<li><a href="admin.php?data=tarif_mod" tabindex="0">Tarifs</a></li>
 												</ul>
 											</li>
 											<li class="divider"></li>
+											<li><a href="admin.php?data=bateau_equip_mod" tabindex="0">Gérer les équipements</a></li>
 										</ul>
 									</li>
 									<li><a href="admin.php?data=reservation_consultation">Réservations</a></li>

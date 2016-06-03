@@ -25,6 +25,7 @@
 			}	
 				// initialisation des vars des tables héritages
 				$PDSMAX = "" ;
+				$IMG_NAME = "" ;
 				$IMG = "" ;
 				$VITESSE = "" ;
 				
@@ -33,12 +34,12 @@
 					if($table == "bfret"){ 
 						$PDSMAX = $resultatHerit['poidsMaxBatFret'] ; 
 					}else{
-						$IMG = $resultatHerit['imageBatVoyageur'] ;
+						$IMG_NAME = $resultatHerit['imageBatVoyageur'] ;
 						$VITESSE = $resultatHerit['vitesseBatVoy'] ;
 					}
 				}
 			$lignes = '
-							<form method="post" id="update_bateau_form" class="form-horizontal col-lg-4">
+							<form method="post" enctype="multipart/form-data" id="update_bateau_form" class="form-horizontal col-lg-4">
 									  <legend>Modifier un bateau</legend>
 								  <fieldset>	
 										  <div>
@@ -65,18 +66,30 @@
 									<div class="form-group">
 									  <div>
 									    <label for="select_typebat" control-label">Type de bateau</label>
-										<select class="form-control" name="select_typebat" id="select_typebat">
+										<select class="form-control" disabled="disabled" name="select_typebat" id="select_typebat">
 											<option '.$selVoy.' value="0">Voyageurs</option>
 											<option '.$selFret.' value="1">Fret</option>
 										</select>
 									  </div>
 									</div>
 									<div '.$styleBV.' class="form-group bvoyageur_form">
-									  <label for="input_imageBatVoyageur" class="control-label">Image du bateau</label>
+									  <label for="input_imageBatVoyageur" class="control-label">Nom de l\'image du bateau</label>
 									  <div>
-										<input type="file" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="'.$IMG.'">
+										<input type="text" disabled="disabled" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="'.$IMG_NAME.'">
 									  </div>
 									</div>
+									
+									
+									<div '.$styleBV.' class="form-group bvoyageur_form">
+										<div id="image_preview"><img id="previewing" src="images/'.$IMG_NAME.'"  style="width:250px; height:230px;"/></div>
+										<!--<img src="data:image/jpeg;base64,'.base64_encode( $IMG ).'"/>-->
+									  <label for="input_image" class="control-label">Image du bateau</label>
+									  <div>
+										<input type="file" class="form-control" name = "input_image" id="input_image">
+									  </div>
+									</div>
+									
+									
 									<div '.$styleBV.' class="form-group bvoyageur_form">
 									  <label for="input_vitesseBatVoy" class="control-label">Vitesse en noeuds</label>
 									  <div>
@@ -90,7 +103,7 @@
 									  </div>
 									</div>
 									<div>
-										<button type="submit" class="btn btn-blueish">Valider</button>
+										<button type="submit" class="btn btn-blueish">Mettre à jour</button>
 										<a id="del_choix" class="btn btn-reddish">Supprimer</a>
 									  </div>
 								  </fieldset><br>
@@ -102,7 +115,7 @@
 		}else{
 			/**** FORM SELECT ID ******/
 			$lignesFormChoix = '<form method="post" class="form-horizontal">
-									<legend>Choisissez un secteur à modifier</legend>
+									<legend>Choisissez un bateau à modifier</legend>
 									<fieldset class="col-lg-4">
 									<div class="form-group">
 										<select class="form-control" name="select_Choix" id="select_Choix">' ;

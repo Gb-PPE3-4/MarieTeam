@@ -1,4 +1,5 @@
 <?PHP
+	
 	if (isset($_REQUEST['fonction']) && $_REQUEST['fonction'] != '')
 	{
 		$_REQUEST['fonction']($_REQUEST);
@@ -27,7 +28,6 @@
 			return $base ;
 		}
 	}
-	
 	// ATTR_CURSOR et CURSOR_SCROLL : options du driver permettant de demander un curseur scrollable à la construction du statement ;
 	function retourneStatementSelect($sql){
 		$base = connexion() ;										// connexion a la bdd
@@ -48,7 +48,26 @@
 		$stmt = null ;
 		return $numRows ;
 	}
+	
+	function updateModif($table, $type_action, $data){
+		session_start();
 		
+		$base = connexion() ;
+		$stmt = $base->prepare("INSERT INTO modifications (iduser, table_modifiee, action, donnees) VALUES (:iduser, :table_modifiee, :action, :donnees)");
+		
+		$stmt->bindParam(':iduser', $iduser);
+		$iduser = $_SESSION['ID'] ;		
+		$stmt->bindParam(':table_modifiee', $table_modifiee) ;
+		$table_modifiee = $table ;
+		$stmt->bindParam(':action', $action) ;
+		$action = $type_action ;
+		$stmt->bindParam(':donnees', $donnees) ;
+		$donnees = json_encode($data['params']) ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
+	
 	function afficheSecteurs(){
 		// Recuperation des secteurs a afficher en liste laterale gauche // Appelee dans header/ul class=sidebar-nav
 		$stmt = retourneStatementSelect("SELECT nom, idsecteur FROM secteur") ;
@@ -466,8 +485,14 @@
 	/******** ADMINISTRATION ********/
 	
 	function delTuple($data){
-		if($data['params']['ID'] != "" && $data['params']['TABLE'] != "" && $data['params']['CHAMPS_ID'] != ""){
+		updateModif($data['params']['TABLE'], "SUPPRESSION", $data) ;
+		
+		if(isset($data['params']['ID']) && $data['params']['ID'] != "" && $data['params']['TABLE'] != "" && $data['params']['CHAMPS_ID'] != ""  && $data['params']['CHAMPS_ID'] != "none"){
 			$sqlDel = "DELETE From ".$data['params']['TABLE']." WHERE ".$data['params']['CHAMPS_ID']." = ".$data['params']['ID'] ;
+			$stmtDel = retourneStatementSelect($sqlDel) ;				
+			$stmtDel = null;
+		}else if($data['params']['CHAMPS_ID'] == "none" && $data['params']['TABLE'] == "tarifer" && $data['params']['idliaison'] != "" && $data['params']['idperiode'] != ""){
+			$sqlDel = "DELETE From ".$data['params']['TABLE']." WHERE idliaison = ".$data['params']['idliaison']." AND idperiode=".$data['params']['idperiode'] ;
 			$stmtDel = retourneStatementSelect($sqlDel) ;				
 			$stmtDel = null;
 		}
@@ -490,6 +515,31 @@
 		}
 		return $nomDep.' - '.$nomArr ;
 	}
+	function returnNomCatType($lettre, $num){
+		return returnNomCategorie($lettre).' - '.returnNomType($lettre, $num) ;
+	}
+	function returnNomCategorie($lettre){
+		if($lettre != ""){
+			$sqlCategorie = "SELECT nom From categorie WHERE lettre = ".$lettre ;
+			$stmtCategorie = retourneStatementSelect($sqlCategorie) ;				
+			while( $resultatCategorie = $stmtCategorie->fetch(PDO::FETCH_ASSOC) ){
+				$nomCat = $resultatCategorie['nom'] ;
+			}
+			$stmtCategorie = null;
+		}
+		return $nomCat ;		
+	}
+	function returnNomType($lettre, $num){
+		if($lettre != "" && $num != ""){
+			$sqlType = "SELECT libelle From type WHERE lettre = ".$lettre." AND num =".$num ;
+			$stmtType = retourneStatementSelect($sqlType) ;				
+			while( $resultatType = $stmtType->fetch(PDO::FETCH_ASSOC) ){
+				$nomType = $resultatType['nom'] ;
+			}
+			$stmtType = null;
+		}
+		return $nomType ;	
+	}
 	
 	function returnNomPeriode($ID){
 		$deb ="" ; $fin ="" ;
@@ -506,6 +556,8 @@
 	}
 	
 	function createMembre($data){
+		updateModif("membre", "AJOUT", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO membre (login, nom, prenom, mail, droit) VALUES (:login, :nom, :prenom, :mail, :droit)");
@@ -524,6 +576,8 @@
 		$base = null ;
 	}
 	function updateMembre($data){
+		updateModif("membre", "MODIFICATION", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("UPDATE membre SET login=:login, nom =:nom, prenom =:prenom, mail =:mail, droit =:droit WHERE id=:id") ;
@@ -545,18 +599,21 @@
 		$base = null ;
 	}
 	function updatePassword($data){
+		updateModif("membre", "MODIFICATION", "MDP") ;
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("UPDATE membre SET mdp=:mdp WHERE id=:id") ;
 		$stmt->bindParam(':id', $id) ;
 		$id = $data['params']['id'] ;
 		$stmt->bindParam(':mdp', $mdp);
-		$mdp = $data['params']['mdp'] ;
+		$mdp = password_hash($data['params']['mdp'], PASSWORD_BCRYPT) ;
 		$stmt->execute();
 		
 		$base = null ;
 	}
 	function createSecteur($data){
+		updateModif("secteur", "AJOUT", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO secteur (nom) VALUES (:nom)");
@@ -567,6 +624,8 @@
 		$base = null ;
 	}
 	function updateSecteur($data){
+		updateModif("secteur", "MODIFICATION", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("UPDATE secteur SET nom =:nom WHERE idsecteur=:idsecteur") ;
@@ -580,6 +639,8 @@
 		$base = null ;
 	}
 	function createPort($data){
+		updateModif("port", "AJOUT", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO port (nom) VALUES (:nom)");
@@ -590,6 +651,8 @@
 		$base = null ;
 	}
 	function updatePort($data){
+		updateModif("port", "MODIFICATION", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("UPDATE port SET nom =:nom WHERE idport=:idport") ;
@@ -603,6 +666,7 @@
 		$base = null ;
 	}
 	function createPeriode($data){
+		updateModif("periode", "AJOUT", $data) ;
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO periode (datedeb, datefin) VALUES (:deb, :fin)");
@@ -614,7 +678,26 @@
 		
 		$base = null ;
 	}
+	function updatePeriode($data){
+		updateModif("periode", "MODIFICATION", $data) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE periode SET datedeb =:datedeb, datefin=:datefin WHERE idperiode=:idperiode") ;
+		
+		$stmt->bindParam(':idperiode', $idperiode) ;
+		$idperiode = $data['params']['idperiode'] ;
+		$stmt->bindParam(':datedeb', $datedeb) ;
+		$datedeb = setDateFormatInsertion($data['params']['datedeb']) ;
+		$stmt->bindParam(':datefin', $datefin) ;
+		$datefin = setDateFormatInsertion($data['params']['datefin']) ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
 	function createLiaison($data){
+		updateModif("liaison", "AJOUT", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO liaison (code, idsecteur, idportdepart, idportarrivee, distance) VALUES (:code, :secteur, :dep, :arr, :dist)");
@@ -633,6 +716,8 @@
 		$base = null ;
 	}
 	function updateLiaison($data){
+		updateModif("liaison", "MODIFICATION", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("UPDATE liaison SET idsecteur =:idsecteur, idportdepart=:idportdepart, idportarrivee=:idportarrivee, distance=:distance WHERE code=:code") ;
@@ -662,6 +747,8 @@
 			return $ID ;
 	}
 	function createBateau($data){
+		updateModif("bateau", "AJOUT", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO bateau (nom, longueurBat, largeurBat, heritage) VALUES (:nom, :longueurBat, :largeurBat, :heritage)");
@@ -677,16 +764,20 @@
 																// TODO prendre en compte l'image du bateau voyageur
 		$sql = "" ;
 		if($data['params']['heritage'] == '0'){
+			updateModif("bvoyageur", "AJOUT", $data) ;
+			
 			$stmtHerit = $base->prepare("INSERT INTO bvoyageur (idbateau, imageBatVoyageur, vitesseBatVoy) VALUES (:idbateau, :imageBatVoyageur, :vitesseBatVoy)") ;
 			
 			$stmtHerit->bindParam(':idbateau' , $idbateau) ;
 			$idbateau = recupLastInsertBat($data) ;
 			$stmtHerit->bindParam(':imageBatVoyageur', $imageBatVoyageur) ;
-			$imageBatVoyageur = $data['params']['img'] ;
+			$imageBatVoyageur = $data['params']['img_name'] ;
 			$stmtHerit->bindParam(':vitesseBatVoy', $vitesseBatVoy);
 			$vitesseBatVoy = $data['params']['vitesse'] ;
 			
 		}else if($data['params']['heritage'] == '1'){
+			updateModif("bfret", "AJOUT", $data) ;
+			
 			$stmtHerit = $base->prepare("INSERT INTO bfret (idbateau, poidsMaxBatFret) VALUES (:idbateau, :poidsMaxBatFret)") ;
 			
 			$stmtHerit->bindParam(':idbateau' , $idbateau) ;
@@ -697,7 +788,110 @@
 		$stmtHerit->execute();
 		$base = null ;
 	}
+	function updateBateau($data){
+		updateModif("bateau", "MODIFICATION", $data) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE bateau SET nom=:nom, longueurBat=:longueurBat, largeurBat=:largeurBat, heritage=:heritage WHERE idbateau=:idbateau");
+		$stmt->bindParam(':idbateau', $idbateau);
+		$idbateau = $data['params']['idbateau'] ;
+		$stmt->bindParam(':nom', $nom);
+		$nom = $data['params']['nom'] ;
+		$stmt->bindParam(':longueurBat', $longueurBat);
+		$longueurBat = $data['params']['longueur'] ;
+		$stmt->bindParam(':largeurBat', $largeurBat);
+		$largeurBat = $data['params']['largeur'] ;
+		$stmt->bindParam(':heritage', $heritage);
+		$heritage = $data['params']['heritage'] ;
+		$stmt->execute();
+																// TODO prendre en compte l'image du bateau voyageur
+		// $parametres['params']['TABLE'] = $data['params']['former_table'] ;
+		// $parametres['params']['CHAMPS_ID'] = "idbateau" ;
+		// $parametres['params']['ID'] = $idbateau ;
+		// delTuple($parametres);
+		
+		if($data['params']['heritage'] == '0'){
+			updateModif("bvoyageur", "MODIFICATION", $data) ;
+			
+			$stmtHerit = $base->prepare("UPDATE bvoyageur SET imageBatVoyageur=:imageBatVoyageur, vitesseBatVoy=:vitesseBatVoy WHERE idbateau=:idbateau") ;
+			
+			$stmtHerit->bindParam(':idbateau' , $idbateauHerit) ;
+			$idbateauHerit = $idbateau ;
+			$stmtHerit->bindParam(':imageBatVoyageur', $imageBatVoyageur) ;
+			$imageBatVoyageur = $data['params']['img_name'] ;
+			$stmtHerit->bindParam(':vitesseBatVoy', $vitesseBatVoy);
+			$vitesseBatVoy = $data['params']['vitesse'] ;
+			
+		}else if($data['params']['heritage'] == '1'){
+			updateModif("bfret", "MODIFICATION", $data) ;
+			
+			$stmtHerit = $base->prepare("UPDATE bfret SET poidsMaxBatFret=:poidsMaxBatFret WHERE idbateau=:idbateau") ;
+			
+			$stmtHerit->bindParam(':idbateau' , $idbateauHerit) ;
+			$idbateauHerit = $idbateau ;
+			$stmtHerit->bindParam(':poidsMaxBatFret', $poidsMaxBatFret);
+			$poidsMaxBatFret = $data['params']['poidsMax'] ;
+		}
+		$stmtHerit->execute();
+		$base = null ;
+	}
+	function createEquipement($data){
+		updateModif("equipement", "AJOUT", $data) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("INSERT INTO equipement (libequip) VALUES (:libequip)");
+		$stmt->bindParam(':libequip', $libequip);
+		$libequip = $data['params']['libequip'] ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
+	function updateEquipement($data){
+		updateModif("equipement", "MODIFICATION", $data) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE equipement SET libequip =:libequip WHERE idequip=:idequip") ;
+		
+		$stmt->bindParam(':idequip', $idequip) ;
+		$idequip = $data['params']['idequip'] ;
+		$stmt->bindParam(':libequip', $libequip);
+		$libequip = $data['params']['libequip'] ;
+
+		$stmt->execute();
+		
+		$base = null ;
+	}
+	function updateBateauEquipement($data){
+		updateModif("equiper", "MODIFICATION", $data) ;
+		
+		$paramDel['params']['ID'] = $data['params']['idbateau'] ;
+		$paramDel['params']['TABLE'] = "equiper" ; 
+		$paramDel['params']['CHAMPS_ID'] = "idbateau" ;
+		delTuple($paramDel) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("INSERT INTO equiper (idbateau, idequip) VALUES (:idbateau, :idequip)")  ;
+		
+		$stmt->bindParam(':idbateau', $idbateau) ;
+		$idbateau = $data['params']['idbateau'] ;
+		$stmt->bindParam(':idequip', $idequip);
+		
+		$RESidEquip = explode("*", $data['params']['idequip']) ;
+		
+		foreach($RESidEquip as $equipement){
+			$idequip = $equipement ;
+			$stmt->execute();
+		}
+		
+		$base = null ;
+	}
 	function createTraversee($data){
+		updateModif("traversee", "AJOUT", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO traversee (dateTraversee, heure, idliaison, idbateau) VALUES (:dateTraversee, :heure, :idliaison, :idbateau)");
@@ -713,7 +907,29 @@
 		
 		$base = null ;
 	}
+	function updateTraversee($data){
+		updateModif("traversee", "MODIFICATION", $data) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE traversee SET dateTraversee=:dateTraversee, heure=:heure, idliaison=:idliaison, idbateau=:idbateau WHERE num=:num");
+		$stmt->bindParam(':num', $num);
+		$num = $data['params']['num'] ;
+		$stmt->bindParam(':dateTraversee', $dateTraversee);
+		$dateTraversee = setDateFormatInsertion($data['params']['dateTraversee']) ;
+		$stmt->bindParam(':heure', $heure);
+		$heure = $data['params']['heure'] ;
+		$stmt->bindParam(':idliaison', $idliaison);
+		$idliaison = $data['params']['idliaison'] ;
+		$stmt->bindParam(':idbateau', $idbateau);
+		$idbateau = $data['params']['idbateau'] ;
+		$stmt->execute();
+		
+		$base = null ;
+	}
 	function createTarif($data){
+		updateModif("tarifer", "AJOUT", $data) ;
+		
 		$base = connexion() ;
 		
 		$stmt = $base->prepare("INSERT INTO tarifer (idliaison, idperiode, lettre, num, tarif) VALUES (:idliaison, :idperiode, :lettre, :num, :tarif)");
@@ -723,69 +939,45 @@
 		$idperiode = $data['params']['idperiode'] ;
 		
 		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "A" ;
 		$stmt->bindParam(':num', $num);
-		$num = 1 ;
 		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['A-1-input_tarif'] ;
-		$stmt->execute();
+		
+		foreach($data['params'] as $key => $value){
+			if($key != "idliaison" && $key != "idperiode"){
+					$RES = explode('-', $key) ;
+					$lettre = $RES[0] ;
+					$num = $RES[1] ;
+					$tarif = $value ;
+					$stmt->execute();
+			}
+		}
+		
+		$base = null ;
+	}
+	function updateTarif($data){
+		updateModif("tarif", "MODIFICATION", $data) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("UPDATE tarifer SET tarif=:tarif WHERE idliaison=:idliaison AND idperiode=:idperiode AND lettre=:lettre AND num=:num");
+		$stmt->bindParam(':idliaison', $idliaison);
+		$idliaison = $data['params']['idliaison'] ;
+		$stmt->bindParam(':idperiode', $idperiode);
+		$idperiode = $data['params']['idperiode'] ;
 		
 		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "A" ;
 		$stmt->bindParam(':num', $num);
-		$num = 2 ;
 		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['A-2-input_tarif'] ;
-		$stmt->execute();
 		
-		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "A" ;
-		$stmt->bindParam(':num', $num);
-		$num = 3 ;
-		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['A-3-input_tarif'] ;
-		$stmt->execute();
-		
-		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "B" ;
-		$stmt->bindParam(':num', $num);
-		$num = 1 ;
-		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['B-1-input_tarif'] ;
-		$stmt->execute();
-		
-		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "B" ;
-		$stmt->bindParam(':num', $num);
-		$num = 2 ;
-		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['B-2-input_tarif'] ;
-		$stmt->execute();
-		
-		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "C" ;
-		$stmt->bindParam(':num', $num);
-		$num = 1 ;
-		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['C-1-input_tarif'] ;
-		$stmt->execute();
-		
-		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "C" ;
-		$stmt->bindParam(':num', $num);
-		$num = 2 ;
-		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['C-2-input_tarif'] ;
-		$stmt->execute();
-		
-		$stmt->bindParam(':lettre', $lettre);
-		$lettre = "C" ;
-		$stmt->bindParam(':num', $num);
-		$num = 3 ;
-		$stmt->bindParam(':tarif', $tarif);
-		$tarif = $data['params']['C-3-input_tarif'] ;
-		$stmt->execute();
-		
+		foreach($data['params'] as $key => $value){
+			if($key != "idliaison" && $key != "idperiode"){
+					$RES = explode('-', $key) ;
+					$lettre = $RES[0] ;
+					$num = $RES[1] ;
+					$tarif = $value ;
+					$stmt->execute();
+			}
+		}
 		
 		$base = null ;
 	}

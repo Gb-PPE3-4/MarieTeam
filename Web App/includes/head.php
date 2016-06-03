@@ -26,8 +26,8 @@
 	
 	<!-- CLASSES & Fonctions PHP -->
 	<?PHP 	include "classes/membre.php" ; 
+			session_start();
 			include "includes/functions.php" ; 
-			session_cache_expire(30); session_start();
 			if (isset($_REQUEST['fonction']) && $_REQUEST['fonction'] != '')
 			{
 				$_REQUEST['fonction']($_REQUEST);

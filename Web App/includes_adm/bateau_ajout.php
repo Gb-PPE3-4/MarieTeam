@@ -34,9 +34,20 @@
 									<div class="form-group bvoyageur_form">
 									  <label for="input_imageBatVoyageur" class="control-label">Image du bateau</label>
 									  <div>
-										<input type="file" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="">
+										<input disabled="disabled" type="text" class="form-control" name = "input_imageBatVoyageur" id="input_imageBatVoyageur" value="">
 									  </div>
 									</div>
+									
+									
+									<div class="form-group bvoyageur_form">
+										<div id="image_preview"><img id="previewing" src="" /></div>
+									  <label for="input_image" class="control-label">Image du bateau</label>
+									  <div>
+										<input type="file" class="form-control" name = "input_image" id="input_image">
+									  </div>
+									</div>
+									
+									
 									<div class="form-group bvoyageur_form">
 									  <label for="input_vitesseBatVoy" class="control-label">Vitesse en noeuds</label>
 									  <div>
