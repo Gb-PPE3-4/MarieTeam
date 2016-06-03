@@ -2,7 +2,7 @@
 	// Classe membre 
 	class Membre{
 		
-		// $utilisateur = unserialize($_SESSION['utilisateur']) ;   *********** ACCES APRES SEIRALISATION DANS $_SESSION
+		// $utilisateur = unserialize($_SESSION['utilisateur']) ;   *********** ACCES APRES SERIALISATION DANS $_SESSION
 		// $utilisateur->getNom() ;
 		
 		private $id ;
@@ -21,7 +21,7 @@
 			$identifiant = 'id' ;
 			
 			$identifiant = $this->idOrLogin($id) ;
-			$req= "SELECT * FROM membre WHERE ".$identifiant."= '".$id."' AND mdp= '".$mdp."'";
+			$req= "SELECT * FROM membre WHERE ".$identifiant."= '".$id."'" ;
 			$base = connexion() ;
 			
 			try {
@@ -32,7 +32,8 @@
             if(PDO_num_rows($req)==1){									// un seule utilisateur se connecte, donc il n'y à qu'une ligne à vérifier, si il y en a plus, c'est une erreur.
 				$jE = $resReq->fetchAll(PDO::FETCH_ASSOC);				//$contenue  récupère untableau de valeur contenant les valeur du membre se connectant
 				foreach ($jE as $table => $row) {
-					if(isset($row['id']) && $row['id'] != ""){
+					
+					if(isset($row['id']) && $row['id'] != "" && password_verify($mdp, $row['mdp'])){
 						$this->id = $row['id'] ;
 						$this->login = $row['login'] ;
 						$this->nom = $row['nom'] ;

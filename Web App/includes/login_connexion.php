@@ -10,7 +10,7 @@
 	if(isset($_POST['identifiant']) && $_POST['identifiant'] != "" && isset($_POST['mdp']) && $_POST['mdp'] != ""){
 		$salarie = new Membre($_POST['identifiant'],$_POST['mdp']) ;
 		if($salarie->getNom() == null){
-			echo 'Erreur : les informations saisies sont incorrectes ( login : '.$_POST['identifiant'].' ).' ;
+			echo 'Erreur : les informations saisies sont incorrectes ( login : '.$_POST['identifiant'].' )'.$_POST['mdp'] ;
 			// header('Location: ../index.php?Erreur=1');
 		}else{
 			header('Location: ../admin.php');

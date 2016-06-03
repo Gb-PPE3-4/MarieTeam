@@ -70,9 +70,9 @@
 									<div class="form-group">
 										<select class="form-control" name="select_Choix" id="select_Choix">' ;
 										
-			$stmt = retourneStatementSelect('SELECT id, login FROM membre') ;
+			$stmt = retourneStatementSelect('SELECT id, nom, prenom FROM membre') ;
 			while( $resultat = $stmt->fetch(PDO::FETCH_ASSOC) ){
-				$lignesFormChoix .= '			<option value="'.$resultat['id'].'">'.$resultat['login'].'</option>';
+				$lignesFormChoix .= '			<option value="'.$resultat['id'].'">'.$resultat['nom'].' '.$resultat['prenom'].'</option>';
 			}			
 			$lignesFormChoix .= '		</select>
 									</div>

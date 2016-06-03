@@ -27,55 +27,25 @@
 		$lignes .= '
 										</select>
 									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="A-1-input_tarif" control-label">Tarif Passager Adulte</label>
-									  <div>
-										<input type="text" class="form-control" name = "A-1-input_tarif" id="A-1-input_tarif" value="">
-									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="A-2-input_tarif" control-label">Tarif Passager Mineur</label>
-									  <div>
-										<input type="text" class="form-control" name = "A-2-input_tarif" id="A-2-input_tarif" value="">
-									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="A-3-input_tarif" control-label">Tarif Passager Mineur < 8 ans</label>
-									  <div>
-										<input type="text" class="form-control" name = "A-3-input_tarif" id="A-3-input_tarif" value="">
-									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="B-1-input_tarif" control-label">Tarif Véhicule < à 2m et longueur < 4m</label>
-									  <div>
-										<input type="text" class="form-control" name = "B-1-input_tarif" id="B-1-input_tarif" value="">
-									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="B-2-input_tarif" control-label">Tarif Véhicule < à 2m et longueur < 5m</label>
-									  <div>
-										<input type="text" class="form-control" name = "B-2-input_tarif" id="B-2-input_tarif" value="">
-									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="C-1-input_tarif" control-label">Tarif Véhicule < à 2m - Fourgon</label>
-									  <div>
-										<input type="text" class="form-control" name = "C-1-input_tarif" id="C-1-input_tarif" value="">
-									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="C-2-input_tarif" control-label">Tarif Véhicule < à 2m - Camping Car</label>
-									  <div>
-										<input type="text" class="form-control" name = "C-2-input_tarif" id="C-2-input_tarif" value="">
-									  </div>
-									</div>
-									<div class="form-group">
-									  <label for="C-3-input_tarif" control-label">Tarif Véhicule < à 2m - Camion</label>
-									  <div>
-										<input type="text" class="form-control" name = "C-3-input_tarif" id="C-3-input_tarif" value="">
-									  </div>
-									</div>
+									</div>';
+					
+
+			$stmtCategories = retourneStatementSelect('SELECT lettre, nom FROM categorie') ;
+			while( $resCategories = $stmtCategories->fetch(PDO::FETCH_ASSOC) ){
+					
+					$stmtTypes = retourneStatementSelect('SELECT lettre, num, libelle FROM type WHERE lettre="'.$resCategories['lettre'].'"' ) ;
+					while( $resTypes = $stmtTypes->fetch(PDO::FETCH_ASSOC) ){
+							
+							$lignes .= '<div class="form-group">
+										  <label for="'.$resCategories['lettre'].'-'.$resTypes['num'].'-input_tarif" control-label">'.$resCategories['nom'].' / '.$resTypes['libelle'].'</label>
+										  <div>
+											<input type="number" class="form-control tarif"  cat="'.$resCategories['lettre'].'" typ="'.$resTypes['num'].'" name = "'.$resCategories['lettre'].'-'.$resTypes['num'].'-input_tarif" id="'.$resCategories['lettre'].'-'.$resTypes['num'].'-input_tarif" value="">
+										  </div>
+										</div>' ;
+					}
+			}
+			
+		$lignes .= '
 									<div>
 										<button type="" class="btn btn-primary">Valider</button>
 									</div>
