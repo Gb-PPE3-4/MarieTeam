@@ -8,7 +8,7 @@
 			<div class="col-lg-12"><h3 style="font-style:italic;">"Le transport avec MarieTeam c'est un voyage à part entière."</h3></div>
 			<br style="clear:both;">
 			<div class="col-lg-6">
-				<p style="text-align:left; padding:10px;">Les îles du litttoral français desservies sont Belle-Île-en-mer, Houat, Ile de Groix, Ouessant, Molène, Sein, Bréhat, Batz, Aix et Yeu.</p>
+				<p style="text-align:left; padding:10px;">Les secteurs du litttoral français desservis sont Belle-Île-en-mer, Houat, Ile de Groix, Ouessant, Molène, Sein, Bréhat, Batz, Aix et Yeu.</p>
 			</div>
 			<div class="col-lg-6">
 				<img style="width:100%; border-radius:25px;" alt="Voyager avec MarieTeam" src="images/voyage.png">

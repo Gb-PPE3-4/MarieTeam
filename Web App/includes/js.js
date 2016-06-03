@@ -44,7 +44,13 @@ $(window).load(function(){
 		$('#div_tabContainer').hide();
 		$('html,body').animate({scrollTop: $("#div_tableTraversee").offset().top}, 'slow'      );
 	});
-	
+	//Gestion affichage image bateau ds choix traversées pr reservation
+	$('#hover_img_bat').click(function() {
+		$('.img_bat').toggle();
+	});
+	$('.img_bat').click(function() {
+		$('.img_bat').toggle();
+	});
 	// sur clic du bouton commençant la reservation, on recupere les infos de la table des traversees
 	$("#reserver").click(function() {
 		// pour chaque elements de la classe row_traversee correspondant a une traversee, on recupere celle qui est "selectionnee" (1 et 1 seule)

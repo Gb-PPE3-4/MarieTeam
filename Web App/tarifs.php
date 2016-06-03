@@ -22,10 +22,11 @@
 						</div>';
 			
 			// Selection des prix a afficher en liste
-			$prix = recupPrix($idLiaison,'yes');
+			$nbPeriodes = PDO_num_rows('SELECT * FROM periode') ;
+			$periodes = array() ;
+			$catypes = array() ;
 			
-			if(isset($prix['1-A1']) && $prix['1-A1'] != null  && $prix['1-A1'] != ''){
-				echo  	'<div id="separateur"><div id="separateur">
+				$lignes =  	'<div id="separateur"><div id="separateur">
 							<div class="col-lg-12">
 								<form class="form-horizontal">
 									<fieldset>
@@ -38,64 +39,66 @@
 												<tr>
 													<th rowspan="2">Catégorie</th>
 													<th rowspan="2">Type</th>
-													<th colspan="3">Période</th>
+													<th colspan="'.$nbPeriodes.'">Période</th>
 												</tr>
-												<tr>
-													<td>01/09/2014 au 15/06/2015</td>
-													<td>16/06/2015 au 15/09/2015</td>
-													<td>16/09/2015 au 31/05/2016</td>
-												</tr>
-												<tr>
-													<td rowspan="3">A <span class="pc">- Passager</span></td>
-													<td>1 <span class="pc">- Adulte</span></td>
-													<td id="prixA1">'.$prix['1-A1'].' €</td>
-													<td id="prixA1">'.$prix['2-A1'].' €</td>
-													<td id="prixA1">'.$prix['3-A1'].' €</td>
-												</tr>
-												<tr>
-													<td>2 <span class="pc">- Junior 8 à  18 ans</span></td>
-													<td id="prixA2">'.$prix['1-A2'].' €</td>
-													<td id="prixA2">'.$prix['2-A2'].' €</td>
-													<td id="prixA2">'.$prix['3-A2'].' €</td>
-												</tr>
-												<tr>
-													<td>3 <span class="pc">- Enfant 0 à 7 ans</span></td>
-													<td id="prixA3">'.$prix['1-A3'].' €</td>
-													<td id="prixA3">'.$prix['2-A3'].' €</td>
-													<td id="prixA3">'.$prix['3-A3'].' €</td>
-												</tr>
-												<tr>
-													<td rowspan="2">B <span class="pc">- Véhicule inférieur à 2m</span></td>
-													<td>1 <span class="pc">- Voiture à longueur inférieure à 4m</span></td>
-													<td id="prixB1">'.$prix['1-B1'].' €</td>
-													<td id="prixB1">'.$prix['2-B1'].' €</td>
-													<td id="prixB1">'.$prix['3-B1'].' €</td>
-												</tr>
-												<tr>
-													<td>2 <span class="pc">- Voiture à longueur inférieure à 5m</span></td>
-													<td id="prixB2">'.$prix['1-B2'].' €</td>
-													<td id="prixB2">'.$prix['2-B2'].' €</td>
-													<td id="prixB2">'.$prix['3-B2'].' €</td>
-												</tr>
-												<tr>
-													<td rowspan="3">C <span class="pc">- Véhicule supérieur à 2m</span></td>
-													<td>1 <span class="pc">- Fourgon</span></td>
-													<td id="prixC1">'.$prix['1-C1'].' €</td>
-													<td id="prixC1">'.$prix['2-C1'].' €</td>
-													<td id="prixC1">'.$prix['3-C1'].' €</td>
-												</tr>
-												<tr>
-													<td>2 <span class="pc">- Camping Car</span></td>
-													<td id="prixC2">'.$prix['1-C2'].' €</td>
-													<td id="prixC2">'.$prix['2-C2'].' €</td>
-													<td id="prixC2">'.$prix['3-C2'].' €</td>
-												</tr>
-												<tr>
-													<td>3 <span class="pc">- Camion</span></td>
-													<td id="prixC3">'.$prix['1-C3'].' €</td>
-													<td id="prixC3">'.$prix['2-C3'].' €</td>
-													<td id="prixC3">'.$prix['3-C3'].' €</td>
-												</tr>
+												<tr>';
+				// RECUP CATYPE 'A1' 'A3' etc + libelle type		
+				$stmtCatype = retourneStatementSelect('SELECT CONCAT(lettre, num) as catype, libelle FROM type') ;				
+				while( $resultatCatype = $stmtCatype->fetch(PDO::FETCH_ASSOC) ){
+					$catypes['ID'][] =  $resultatCatype['catype'] ;
+					$catypes[$resultatCatype["catype"]] =  $resultatCatype['libelle'] ;
+				}
+				$stmtCatype = null;
+				
+				// RECUP LES ID PERIODE
+				$stmtPeriode = retourneStatementSelect('SELECT * FROM periode') ;				
+				while( $resultatPeriode = $stmtPeriode->fetch(PDO::FETCH_ASSOC) ){
+					$lignes .= '<td>'.setDateFormatLecture($resultatPeriode['datedeb']).' au '.setDateFormatLecture($resultatPeriode['datefin']).'</td>' ;
+					$periodes[] =  $resultatPeriode['idperiode'] ;
+				}
+				$stmtPeriode = null;
+				
+				$lignes .= '					</tr>';
+													// <td rowspan="3">A <span class="pc">- Passager</span></td>
+													// <td>1 <span class="pc">- Adulte</span></td>
+				foreach($catypes['ID'] as $CATYP){
+					
+					$lignes .= '<tr>' ;
+					switch ($CATYP){
+						case 'A1' :
+							$lignes .= '<td rowspan="3">A <span class="pc">- Passager</span></td>
+										<td>1 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+						case 'A2' :
+							$lignes .= '<td>2 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+						case 'A3' :
+							$lignes .= '<td>3 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+						case 'B1' :
+							$lignes .= '<td rowspan="2">B <span class="pc">- Véhicule inférieur à 2m</span></td>
+										<td>1 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+						case 'B2' :
+							$lignes .= '<td>2 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+						case 'C1' :
+							$lignes .= '<td rowspan="3">C <span class="pc">- Véhicule supérieur à 2m</span></td>
+										<td>1 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+						case 'C2' :
+							$lignes .= '<td>2 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+						case 'C3' :
+							$lignes .= '<td>3 <span class="pc">- '.$catypes[$CATYP].'</span></td>' ;
+							break ;
+					}
+					foreach($periodes as $ID){
+						$lignes .= '<td>'.prixTarif($idLiaison, $CATYP, $ID).' €</td>' ;
+					}
+					$lignes .= '</tr>' ;
+				}
+				$lignes .= '					</tr>
 											</table>
 											</div>
 										</div>
@@ -103,7 +106,8 @@
 								</form>
 							</div></div>
 						</div>';
-			}else{echo '<br>Tarifs non disponibles pour cette liaison !' ;}
+				echo $lignes ;
+				
 			include 'includes/popup_connexion.php' ;
        					  ?>
 		<!-- /#wrapper main -->
