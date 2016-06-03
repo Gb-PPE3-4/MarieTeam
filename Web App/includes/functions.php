@@ -195,10 +195,14 @@
 								<td data-nom="num">'.$resultat['num'].'</td>
 								<td data-nom="dateTraversee">'.setDateFormatLecture($resultat['dateTraversee']).'</td>
 								<td data-nom="heure">'.$resultat['heure'].'</td>';
-				// Recupere le du bateau
+				// Recupere le nom et l'image du bateau
+				$stmtImage = retourneStatementSelect("SELECT `imageBatVoyageur` as img FROM bvoyageur WHERE idbateau='".$resultat['idbateau']."'") ;
+				$resultatImage = $stmtImage->fetch(PDO::FETCH_ASSOC)  ;
+				$stmtImage = null;
+				
 				$stmtBateau = retourneStatementSelect("SELECT nom FROM bateau WHERE idbateau='".$resultat['idbateau']."'") ;
 				while( $resultatBateau = $stmtBateau->fetch(PDO::FETCH_ASSOC) ){
-					$lignes .= '<td data-nom="nomBateau">'.$resultatBateau['nom'].'</td>';
+					$lignes .= '<td data-nom="nomBateau"><a href="#" id="hover_img_bat">'.$resultatBateau['nom'].'</a><img class="img_bat" src="images/'.$resultatImage['img'].'" /></td>';
 				}
 				$stmtBateau = null;
 				// Recupere la distance de la liaison
@@ -221,17 +225,18 @@
 		
 		$prix = '' ;
 		$connexion = connexion() ;
-		if($date == 'yes' || $date == 'y'){
+		// if($date == 'yes' || $date == 'y' || is_int($date)){
 			// Seléction des prix à afficher en liste
-			$resultats=$connexion->query("SELECT T.idperiode, lettre, num, tarif FROM `tarifer` AS T, `periode` AS P WHERE idliaison=".$idliaison." AND T.idperiode=P.idperiode ORDER BY T.idperiode, lettre, num");
-			$resultats->setFetchMode(PDO::FETCH_OBJ);
-			while( $resultat = $resultats->fetch() ){
-				if($resultat->tarif != '' && $resultat->tarif!=null){
-					$prix[$resultat->idperiode.'-'.$resultat->lettre.$resultat->num] = $resultat->tarif ;
-				}
-			}
-			$resultats->closeCursor();
-		}else{
+			// $resultats=$connexion->query("SELECT T.idperiode, lettre, num, tarif FROM `tarifer` AS T, `periode` AS P WHERE idliaison=".$idliaison." AND T.idperiode=P.idperiode ORDER BY T.idperiode, lettre, num");
+			// $resultats->setFetchMode(PDO::FETCH_OBJ);
+			// while( $resultat = $resultats->fetch() ){
+				// if($resultat->tarif != '' && $resultat->tarif!=null){
+					// $prix[$resultat->idperiode.'-'.$resultat->lettre.$resultat->num] = $resultat->tarif ;
+				// }
+			// }
+			// $resultats->closeCursor();
+			
+		// }else{
 			
 			// Selection des prix à afficher en liste / renvoie un tableau avec la categ+type et le prix
 			$resultats=$connexion->query("SELECT idliaison, T.idperiode, lettre, num, tarif FROM `tarifer` AS T, `periode` AS P WHERE idliaison=".$idliaison." AND T.idperiode=P.idperiode AND (P.datedeb < '".$date."' OR P.datedeb = '".$date."')AND (P.datefin > '".$date."'  OR P.datedeb = '".$date."') ORDER BY lettre, num");
@@ -240,11 +245,24 @@
 					$prix[$resultat->lettre.$resultat->num] = $resultat->tarif ;
 			}
 			$resultats->closeCursor();
-		}
+		// }
 		$connexion = null ;
 		return $prix ;
 	}
-
+	function prixTarif($idliaison, $catype, $idperiode){
+		$connexion = connexion() ;
+			$lettre = substr($catype, 0,1) ;
+			$num = substr($catype, -1) ;
+			$sql = 'SELECT tarif From tarifer WHERE idperiode = '.$idperiode.' AND idliaison='.$idliaison.' AND lettre="'.$lettre.'" AND num='.$num ;
+			$stmt = retourneStatementSelect($sql) ;				
+			$resultat = $stmt->fetch(PDO::FETCH_ASSOC) ;
+			$prix = $resultat['tarif'] ;
+			
+			$stmt = null;
+			
+		$connexion = null ;
+		return $resultat['tarif'] ;
+	}
 	function recupPlacesRestantes($data){
 		
 		$placesRestantes = array() ;
@@ -560,7 +578,7 @@
 		
 		$base = connexion() ;
 		
-		$stmt = $base->prepare("INSERT INTO membre (login, nom, prenom, mail, droit) VALUES (:login, :nom, :prenom, :mail, :droit)");
+		$stmt = $base->prepare("INSERT INTO membre (login, nom, prenom, mdp, mail, droit) VALUES (:login, :nom, :prenom, :mdp, :mail, :droit)");
 		$stmt->bindParam(':login', $login);
 		$login = $data['params']['login'] ;
 		$stmt->bindParam(':nom', $nom);
@@ -571,6 +589,9 @@
 		$mail = $data['params']['mail'] ;
 		$stmt->bindParam(':droit', $droit);
 		$droit = $data['params']['droit'] ;
+		
+		$stmt->bindparam(':mdp', $mdp) ;
+		$mdp = password_hash('mdp', PASSWORD_BCRYPT) ;
 		$stmt->execute();
 		
 		$base = null ;

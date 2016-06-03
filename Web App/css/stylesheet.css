@@ -16,6 +16,18 @@ table {text-align:left;}
     position: relative;
 }
 .pc{display:inline;}
+.img_bat{
+	display:none;
+	position:fixed; max-width:400px;width:50%;left:20%;top:200px;
+	border:1px solid white;
+	z-index:300px;
+	
+	-moz-box-shadow: 1px 1px 5px 1px grey;
+    -webkit-box-shadow: 1px 1px 5px 1px grey;
+    -o-box-shadow: 1px 1px 5px 1px grey;
+    box-shadow: 1px 1px 5px 1px grey;
+    filter: progid:DXImageTransform.Microsoft.Shadow(color=grey, Direction=134, Strength=15);
+}
 .white-popup-block > fieldset > ul {list-style:none; width:60%; margin: 0 auto ;}
 .white-popup-block > fieldset > ul > li {text-align:right;margin-right:30%;}
 .white-popup-block > fieldset > ul > li > input{width:150px;}
@@ -50,4 +62,13 @@ footer{padding:5px; margin:0; background-color:#2C3E50; color:#BED3E8; position:
 @media all and (max-width: 950px) {
     .pc {display:none;}
 	#wrapper_main {margin: 0; max-width: 100%;}
+}
+@media all and (max-width: 650px) {
+	.img_bat{
+		max-width:628px;
+		margin: 0 auto;
+		width:100%;
+		top:0;
+		left:0;
+	}
 }
