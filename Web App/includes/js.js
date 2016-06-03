@@ -45,10 +45,12 @@ $(window).load(function(){
 		$('html,body').animate({scrollTop: $("#div_tableTraversee").offset().top}, 'slow'      );
 	});
 	//Gestion affichage image bateau ds choix traversées pr reservation
-	$('#hover_img_bat').click(function() {
+	$('#wrapper_main').on('click', '#hover_img_bat', function() {
+	// $('#hover_img_bat').click(function() {
 		$('.img_bat').toggle();
 	});
-	$('.img_bat').click(function() {
+	$('#wrapper_main').on('click', '.img_bat', function() {
+	// $('.img_bat').click(function() {
 		$('.img_bat').toggle();
 	});
 	// sur clic du bouton commençant la reservation, on recupere les infos de la table des traversees
