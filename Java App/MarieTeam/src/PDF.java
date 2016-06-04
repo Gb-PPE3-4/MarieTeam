@@ -28,6 +28,7 @@ public class PDF {
     
     String nomDoc;
     PDF monPDF;
+    static String lienImage = "http://localhost/marieteam/Web%20App/images/" ;
     Document document = new Document(PageSize.A4);
     
 
@@ -55,14 +56,13 @@ public class PDF {
     }
 
     /**
-     * Charger une image a partir de l'url en relatif
+     * Charger une image a partir de l'url
      * 
      * @param chemin de l'image.
      * 
      */
     public void chargerImage (String chemin) throws MalformedURLException, IOException, DocumentException{   
-    	// Image image = Image.getInstance("/MarieTeam/"+chemin) ;
-    	Image image = Image.getInstance("C:/wamp/www/MarieTeam/Java App/MarieTeam/img/"+chemin) ;
+    	Image image = Image.getInstance(lienImage+chemin) ;
 	    image.scalePercent(30f) ;
 	    image.setAlignment(Image.LEFT) ;
 	    document.add(image) ;
