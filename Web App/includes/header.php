@@ -70,6 +70,7 @@
 											</li>
 											<li class="divider"></li>
 											<li><a href="admin.php?data=bateau_equip_mod" tabindex="0">Gérer les équipements</a></li>
+											<li><a href="admin.php?data=bateau_mod_capacite_max" tabindex="0">Gérer la capacité d\'accueil des bateaux</a></li>
 										</ul>
 									</li>
 									<li><a href="admin.php?data=reservation_consultation">Réservations</a></li>

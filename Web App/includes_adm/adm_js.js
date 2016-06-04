@@ -506,6 +506,28 @@ $(window).load(function(){
 			$("#updt_bateau_equip_msg").html("Vous n'avez pas rempli les champs nécessaires.");
 		}
 	});
+	//UPDATE BATEAU / CAPACITE MAX
+	$("#update_bateau_cptmax_form").submit(function(e){
+		e.preventDefault();
+		
+		if($("#input_id").val() != "" && $("#input_cptmax").val() > 0 && $("#input_lettre").val() != ""){
+			
+				$.ajax({
+							url: 'includes/functions.php',
+							type:'POST',
+							data: {
+								fonction:'updateBateauContenir',
+								params: {idbateau:$('#input_id').val(), lettre:$('#input_lettre').val(),cptMax:$('#input_cptmax').val()}
+							},
+							success: function(data)
+							{
+								$("#updt_bateau_cptmax").html("Les nouvelles données ont bien été enregistrées.");
+							}
+				 });
+		}else{
+			$("#updt_bateau_cptmax").html("Vous n'avez pas rempli les champs nécessaires.");
+		}
+	});
 	// CREATE TRAVERSEE
 	$("#create_traversee_form").submit(function(e){
 		e.preventDefault();

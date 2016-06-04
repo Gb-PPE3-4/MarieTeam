@@ -517,7 +517,7 @@
 	function delTuple($data){
 		updateModif($data['params']['TABLE'], "SUPPRESSION", $data) ;
 		
-		if(isset($data['params']['ID']) && $data['params']['ID'] != "" && $data['params']['TABLE'] != "" && $data['params']['CHAMPS_ID'] != ""  && $data['params']['CHAMPS_ID'] != "none"){
+		if(isset($data['params']['ID']) && $data['params']['ID'] != "" && $data['params']['TABLE'] != "" && $data['params']['CHAMPS_ID'] != ""  && $data['params']['CHAMPS_ID'] != "none" && $data['params']['TABLE'] != "contenir"){
 			$sqlDel = "DELETE From ".$data['params']['TABLE']." WHERE ".$data['params']['CHAMPS_ID']." = ".$data['params']['ID'] ;
 			$stmtDel = retourneStatementSelect($sqlDel) ;				
 			$stmtDel = null;
@@ -525,6 +525,13 @@
 			$sqlDel = "DELETE From ".$data['params']['TABLE']." WHERE idliaison = ".$data['params']['idliaison']." AND idperiode=".$data['params']['idperiode'] ;
 			$stmtDel = retourneStatementSelect($sqlDel) ;				
 			$stmtDel = null;
+		}else if($data['params']['TABLE'] == "contenir"){
+			$ID = explode('*', $data['params']['ID']) ;
+			$sqlDel = "DELETE From contenir WHERE idbateau = ".$ID[0]." AND lettre='".$ID[1]."'" ;
+			$stmtDel = retourneStatementSelect($sqlDel) ;				
+			$stmt = retourneStatementSelect("DELETE From bateau WHERE idbateau = 13") ;
+			$stmtDel = null;
+			$stmt = null;
 		}
 	}
 	function returnNomLiaison($portdep, $portarr){
@@ -920,6 +927,30 @@
 			$stmt->execute();
 		}
 		
+		$base = null ;
+	}
+	function updateBateauContenir($data){
+		$paramDel['params']['ID'] = $data['params']['idbateau'].'*'.$data['params']['lettre'] ;
+		$paramDel['params']['TABLE'] = "contenir" ; 
+		$paramDel['params']['CHAMPS_ID'] = "idbateau" ;
+		delTuple($paramDel) ;
+		
+		
+		updateModif("contenir", "MODIFICATION", $data) ;
+		
+		$base = connexion() ;
+		
+		$stmt = $base->prepare("INSERT INTO contenir (idbateau, lettre, capaciteMax) VALUES (:idbateau, :lettre, :cptMax)")  ;
+		
+		$stmt->bindParam(':idbateau', $idbateau) ;
+		$idbateau = $data['params']['idbateau'] ;
+		$stmt->bindParam(':lettre', $lettre) ;
+		$lettre = $data['params']['lettre'] ;
+		$stmt->bindParam(':cptMax', $cptMax) ;
+		$cptMax = $data['params']['cptMax'] ;
+		
+		$stmt->execute();
+			
 		$base = null ;
 	}
 	function createTraversee($data){
