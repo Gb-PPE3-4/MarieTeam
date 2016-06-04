@@ -4,7 +4,7 @@
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<button type="button" class="close btn_annulerReservation" data-dismiss="modal" aria-hidden="true">×</button>
 								<h4 class="modal-title">Votre Réservation</h4>
 							</div>
 							<div class="modal-body">
@@ -27,7 +27,7 @@
 										<br>
 										<div class="modal-footer">
 											<div class="btn-group">
-												<button class="btn btn-warning" data-dismiss="modal">Annuler</button>
+												<a href="#" class="btn btn-warning btn_annulerReservation">Annuler</a>
 												<a href="#" id="btn_confimerReservation" data-dismiss="modal" class="btn btn-success">Confirmer la réservation</a>
 											</div>
 										</div>

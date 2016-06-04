@@ -410,7 +410,7 @@
 												<div class="col-lg-2">
 													<input disabled id="txt_totalPrix" name="" value="0" type="number" class="form-control">
 												</div>
-												<div class="col-lg-3"><a data-toggle="modal" data-target="#div_confirmReserv" id="btn_validerRservation" style="width:100%;" class="btn btn-success">Valider la réservation</a></div>
+												<div class="col-lg-3"><a data-toggle="modal" data-target="#div_confirmReserv" id="btn_validerReservation" style="width:100%;" class="btn btn-success">Valider la réservation</a></div>
 												<div class="col-lg-3"><a id="btn_retourVersTraversee" style="width:100%;" class="btn btn-warning">Retour</a></div>
 											</div>
 										</fieldset>
@@ -421,65 +421,77 @@
 		}
 		echo $lignes ;
 	}
-	
-	function retourneStatementInsertReservation($data){
-		$base = connexion() ;
-		$stmt = $base->prepare("INSERT INTO reservation (idreservation, nom, adresse, cp, ville, idtraversee, dateEnregistrement) VALUES ('',:nom, :adresse, :cp, :ville, :idtraversee, NOW())");
-		$stmt->bindParam(':nom', $nom);
-		$stmt->bindParam(':adresse', $adresse);
-		$stmt->bindParam(':cp', $cp);
-		$stmt->bindParam(':ville', $ville);
-		$stmt->bindParam(':idtraversee', $idtraversee);
-		
-		$nom = $data['params']['nom'] ;
-		$adresse = $data['params']['adresse'] ;
-		$cp = $data['params']['cp'] ;
-		$ville = $data['params']['ville'] ;
-		$idtraversee = $data['params']['idtraversee'] ;
-		
-		$stmt->execute();
-		$base = null ;
-		return $stmt ;
-	}
-	
-	function retourneStatementInsertEnregistrer($data){
-		$base = connexion() ;
-		$stmtID = retourneStatementSelect("SELECT MAX(idreservation) as ID FROM reservation WHERE nom='".$data['params']['nom']."'") ;
-		while( $resultat = $stmtID->fetch(PDO::FETCH_ASSOC) ){
-				$idreservation = $resultat['ID'] 	;
-		}
-		$stmtID = null ;
-		
-		$stmt = $base->prepare("INSERT INTO enregistrer (lettre, num, idreservation, quantite) VALUES (:lettre, :num, ".$idreservation.", :quantite)");
-		$stmt->bindParam(':lettre', $lettre);
-		$stmt->bindParam(':num', $num);
-		$stmt->bindParam(':quantite', $quantite);
-		
-		foreach($data['params']['tab'] as $key => $val){
-			$lettre = $key[0] ;
-			$num = $key[1] ;
-			$quantite = $val ;
-			
-			$stmt->execute();
-		}
-		
-		$base = null ;
-		return $stmt ;
-	}
 
 	function enregistrerNouvelleReserv($data){
 		
-		$stmtReserv = retourneStatementInsertReservation($data) ;
-		$stmtEnr = retourneStatementInsertEnregistrer($data) ;
-		
-		if($stmtReserv == false || $stmtEnr == false){
-			echo 'false ' ;
-		}else{
-			echo 'true' ;
+		try{
+			$base = connexion() ;
+			
+			$base->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			$base->beginTransaction();
+			
+			// ENR RESERVATION
+			$stmtReserv = $base->prepare("INSERT INTO reservation (idreservation, nom, adresse, cp, ville, idtraversee, dateEnregistrement) VALUES ('',:nom, :adresse, :cp, :ville, :idtraversee, NOW())");
+			$stmtReserv->bindParam(':nom', $nom);
+			$stmtReserv->bindParam(':adresse', $adresse);
+			$stmtReserv->bindParam(':cp', $cp);
+			$stmtReserv->bindParam(':ville', $ville);
+			$stmtReserv->bindParam(':idtraversee', $idtraversee);
+			
+			$nom = $data['params']['nom'] ;
+			$adresse = $data['params']['adresse'] ;
+			$cp = $data['params']['cp'] ;
+			$ville = $data['params']['ville'] ;
+			$idtraversee = $data['params']['idtraversee'] ;
+			
+			$stmtReserv->execute();
+			$base->commit();
+			
+			// RECUP ID RESERVATION ENRISGTREE
+			$stmtID = retourneStatementSelect("SELECT MAX(idreservation) as ID FROM reservation WHERE nom='".$data['params']['nom']."'") ;
+			while( $resultat = $stmtID->fetch(PDO::FETCH_ASSOC) ){
+					$idreservation = $resultat['ID'] 	;
+			}
+			$stmtID = null ;
+			
+			$base->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			$base->beginTransaction();
+			
+			// ENR PLACES
+			$stmtEnr = $base->prepare("INSERT INTO enregistrer (lettre, num, idreservation, quantite) VALUES (:lettre, :num, ".$idreservation.", :quantite)");
+			$stmtEnr->bindParam(':lettre', $lettre);
+			$stmtEnr->bindParam(':num', $num);
+			$stmtEnr->bindParam(':quantite', $quantite);
+			
+			foreach($data['params']['tab'] as $key => $val){
+				$lettre = $key[0] ;
+				$num = $key[1] ;
+				$quantite = $val ;
+				
+				$stmtEnr->execute();
+			}
+			$base->commit();
+			$base = null ;
+			
+			if($stmtReserv == false || $stmtEnr == false){
+				$lignes = 'false' ;
+			}else{
+				$lignes = 'true' ;
+			}
+			
+			$stmtReserv = null ;
+			$stmtEnr = null ;
+		}catch (Exception $e) {
+			$base->rollBack();
+			$lignes = "false" ;//"Erreur: " . $e->getMessage();
+			$parametres['params']['ID'] = $idreservation ;
+			$parametres['params']['TABLE'] = 'reservation' ;
+			$parametres['params']['CHAMPS_ID'] = 'idreservation' ;
+			deltTuple($parametres) ;
 		}
-		
-		$stmtReserv = null ;
-		$stmtEnr = null ;
+		echo $lignes ;
 	}
 		
 	function setDateFormatInsertion($date){														// Prend le format DATE JJ/MM/AAAA retourné par l'user et renvoie

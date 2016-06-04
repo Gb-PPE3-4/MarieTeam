@@ -1,0 +1,31 @@
+BEGIN
+	DECLARE places INT (4) ;
+	DECLARE total INT(4) ;
+    DECLARE msg VARCHAR(100) ;
+    
+	SELECT C.capaciteMax INTO places
+	FROM contenir  AS C, reservation AS R, traversee AS T
+	WHERE C.idbateau=T.idbateau
+	AND T.num=R.idtraversee
+    AND C.lettre=NEW.lettre 
+	AND R.idreservation=NEW.idreservation ;
+		
+	SELECT SUM(E.quantite) INTO total 
+	FROM enregistrer AS E, reservation AS R
+	WHERE E.lettre=NEW.lettre
+    AND E.idreservation=R.idreservation
+	AND R.idtraversee=(
+			SELECT idtraversee 
+			FROM reservation 
+			WHERE idreservation = NEW.idreservation);
+						
+	IF (places < (total + NEW.quantite)) THEN 
+    	DELETE FROM reservation
+        WHERE idreservation=NEW.idreservation ;
+        
+		set msg = "DIE: You broke the rules... I will now Smite you, hold still...";
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
+    END IF ;
+END
+
+// CAPACITE MAX POUR IDBATEAU ET LETTRE

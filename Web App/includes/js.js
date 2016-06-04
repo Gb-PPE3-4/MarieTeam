@@ -45,10 +45,12 @@ $(window).load(function(){
 		$('html,body').animate({scrollTop: $("#div_tableTraversee").offset().top}, 'slow'      );
 	});
 	//Gestion affichage image bateau ds choix traversées pr reservation
-	$('#hover_img_bat').click(function() {
+	$('#wrapper_main').on('click', '#hover_img_bat', function() {
+	// $('#hover_img_bat').click(function() {
 		$('.img_bat').toggle();
 	});
-	$('.img_bat').click(function() {
+	$('#wrapper_main').on('click', '.img_bat', function() {
+	// $('.img_bat').click(function() {
 		$('.img_bat').toggle();
 	});
 	// sur clic du bouton commençant la reservation, on recupere les infos de la table des traversees
@@ -59,11 +61,8 @@ $(window).load(function(){
 				cptCheck++ ;
 				if(cptCheck==1){
 					// dans la version pc
-					//debugging alert($(this).children().first().children().first().hasClass("card-view"));
 					if(!$(this).first().hasClass("bs-checkbox") && !$(this).children().first().children().first().hasClass("card-view")){
 						$(this).children().each(function() {
-							// alert($(this).children().first().hasClass("card-view"));
-							// alert($(this).hasClass("bs-checkbox"));
 							if(!$(this).hasClass("bs-checkbox")){
 								tableau_data[cpt] = $(this).html() ;
 								cpt = cpt +1 ;
@@ -74,7 +73,6 @@ $(window).load(function(){
 						$(this).children().first().children().each(function() {
 							if($(this).children().first().attr("checked")!='checked'){
 								if($(this).children().last().hasClass("value")){
-									// alert($(this).children().last().hasClass("value")) ;
 									tableau_data[cpt] = $(this).children().last().html() ;
 									cpt = cpt +1 ;
 								}
@@ -114,7 +112,6 @@ $(window).load(function(){
 			$('#span_numTraversee').html(tableau_data['1']);
 			$('#span_date').html(tableau_data['2']);
 			$('#span_heure').html(tableau_data['3'].replace(":", "H"));
-			//debugging alert($('#slct_idLiaison').attr("id_traversee"));
 			$('#div_tableTraversee').hide();
 			$('#desc_options').hide();
 			$('#reserver').hide();
@@ -136,18 +133,15 @@ $(window).load(function(){
 	var total = 0 ;
 	$("#div_tabContainer").on("change", '.qte',function() {
 		$('.qte').each(function(){
-			//debugging alert($(this).val());
-			//debugging alert($(this).closest("td").next().html());
 			total = parseFloat(parseFloat(total) + parseFloat($(this).val()) * parseFloat($(this).closest("td").next().html())) ;
 		});
 		$('#txt_totalPrix').val(0);
-		//debugging alert(total);
 		$('#txt_totalPrix').val(parseFloat(total).toFixed(2));
 		total = 0 ;
 	});
 	
-	$("#div_tabContainer").on("click", '#btn_validerRservation',function() {
-		$('#btn_validerRservation').attr('data-toggle', '');
+	$("#div_tabContainer").on("click", '#btn_validerReservation',function() {
+		$('#btn_validerReservation').attr('data-toggle', '');
 		var verifPrsceInfos = false ;
 		$('#span_nom').html($('#txt_nomR').val());
 		$('#span_adresse').html($('#txt_adresseR').val());
@@ -162,7 +156,6 @@ $(window).load(function(){
 			qteCT = $(this).val() ;
 			$('.span_libCategType').each(function(){
 				idSpan = $(this).attr("id");
-				// console.log(idSpan.substring(5,idSpan.length));
 				
 				if(idSpan.substring(5,idSpan.length) == idQte){
 					$(this).html(qteCT);
@@ -179,8 +172,42 @@ $(window).load(function(){
 			if($('#txt_nomR').val() == '' || $('#txt_adresseR').val() == '' || $('#txt_cpR').val() == '' || $('#txt_villeR').val() == ''){verifPrsceInfos = false ;}
 		});
 		
+		// VERIF NB_PLACES < TOTAL_PLACES
+		var placesA=0;
+		var placesB=0;
+		var placesC=0;
+		var maxPlacesA=0;
+		var maxPlacesB=0;
+		var maxPlacesC=0;
+		var limitDepassee = false ;
+		
+		$('.qte').each(function(){
+			// recup lettre
+			if($(this).attr("id").substring(0, 1) == 'A'){
+				placesA = placesA + parseInt($(this).val()) ;
+			}else if($(this).attr("id").substring(0, 1) == 'B'){
+				placesB = placesB + parseInt($(this).val()) ;
+			}else if($(this).attr("id").substring(0, 1) == 'C'){
+				placesC = placesC + parseInt($(this).val()) ;
+			}
+		});
+		$('.placesRest').each(function(){
+			// recup max
+			if($(this).attr("id") == 'A'){
+				maxPlacesA = $(this).html() ;
+			}else if($(this).attr("id") == 'B'){
+				maxPlacesB = parseInt($(this).html()) ;
+			}else if($(this).attr("id") == 'C'){
+				maxPlacesC = parseInt($(this).html()) ;
+			}
+		});
+		if(placesA > maxPlacesA){limitDepassee = true ; $('#A1qte').addClass('txt_red') ;}
+		if(placesB > maxPlacesB){limitDepassee = true ; $('#A1qte').addClass('txt_red') ;}
+		if(placesC > maxPlacesC){limitDepassee = true ; $('#A1qte').addClass('txt_red') ;}
+		
+		// AJOUT PRIX TOTAL & DISPLAY MSG
 		$('#span_totalPrix').html($('#txt_totalPrix').val());
-		if(verifPrsceInfos == true){
+		if(verifPrsceInfos == true && !limitDepassee){
 			$('#btn_validerRservation').attr('data-toggle', 'modal');
 			$('#div_confirmReserv').toggle();
 		}else{
@@ -193,9 +220,12 @@ $(window).load(function(){
 		}
 	});
 	
+	$(".btn_annulerReservation").click(function() {
+		// location.reload() ;
+		$('#div_confirmReserv').toggle();
+	});
 	$("#btn_confimerReservation").click(function() {
 		var tableau_dataReservation = {};
-		// alert("we're in!");
 		var idTravReserv = $('#span_numTraversee').html();
 		var nomReserv = $('#span_nom').html();
 		var adresseTravReserv = $('#span_adresse').html();
@@ -207,7 +237,6 @@ $(window).load(function(){
 			qteCT = $(this).html() ;
 			tableau_dataReservation[idQte] = qteCT ;
 		});
-		console.log(tableau_dataReservation);
 		$.ajax({
                 url: 'includes/functions.php',
                 type:'POST',
@@ -217,7 +246,6 @@ $(window).load(function(){
 				},
 				success: function(data)
                 {
-					// console.log(data);
 					if(data == 'false'){	location.href = 'message.php?status=0' ;					
 					}else{ location.href = 'message.php?status=1' ;	}
                 }
@@ -239,17 +267,13 @@ function metNbPlacesAJour(){
 				},
 				success: function(data)
                 {
-					console.log(data);
 					chainePropre = data.split(',');
-					//debugging console.log(chainePropre);
 					if(chainePropre != '' && chainePropre != null){
 						
 						$(".placesRest").each(function(){
 							collectionPrix += $(this).html(chainePropre[cpt])+',';
 							cpt++;
 						});
-						//debugging console.log(collectionPrix);
-						//debugging console.log(chainePropre);
 					}
                    }
     });
@@ -262,6 +286,4 @@ function dump(obj) {
     for (var i in obj) {
         out += i + ": " + obj[i] + "\n";
     }
-
-    //debugging alert(out);
 }

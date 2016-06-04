@@ -1,0 +1,6 @@
+CREATE TRIGGER `NomPrenom` BEFORE INSERT ON `modifications`
+ FOR EACH ROW BEGIN
+	DECLARE NOMP VARCHAR(70);
+  	SELECT CONCAT(`nom`, ' ', `prenom`) INTO NOMP FROM `membre` WHERE `id`=NEW.iduser ;
+    SET NEW.nom_prenom = NOMP;
+  END
