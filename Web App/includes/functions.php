@@ -410,7 +410,7 @@
 												<div class="col-lg-2">
 													<input disabled id="txt_totalPrix" name="" value="0" type="number" class="form-control">
 												</div>
-												<div class="col-lg-3"><a data-toggle="modal" data-target="#div_confirmReserv" id="btn_validerRservation" style="width:100%;" class="btn btn-success">Valider la réservation</a></div>
+												<div class="col-lg-3"><a data-toggle="modal" data-target="#div_confirmReserv" id="btn_validerReservation" style="width:100%;" class="btn btn-success">Valider la réservation</a></div>
 												<div class="col-lg-3"><a id="btn_retourVersTraversee" style="width:100%;" class="btn btn-warning">Retour</a></div>
 											</div>
 										</fieldset>
@@ -476,21 +476,22 @@
 			$base = null ;
 			
 			if($stmtReserv == false || $stmtEnr == false){
-				echo 'false' ;
+				$lignes = 'false' ;
 			}else{
-				echo 'true' ;
+				$lignes = 'true' ;
 			}
 			
 			$stmtReserv = null ;
 			$stmtEnr = null ;
 		}catch (Exception $e) {
 			$base->rollBack();
-			// echo "Erreur: " . $e->getMessage();
+			$lignes = "false" ;//"Erreur: " . $e->getMessage();
 			$parametres['params']['ID'] = $idreservation ;
 			$parametres['params']['TABLE'] = 'reservation' ;
 			$parametres['params']['CHAMPS_ID'] = 'idreservation' ;
 			deltTuple($parametres) ;
 		}
+		echo $lignes ;
 	}
 		
 	function setDateFormatInsertion($date){														// Prend le format DATE JJ/MM/AAAA retourné par l'user et renvoie
