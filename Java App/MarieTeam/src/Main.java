@@ -13,6 +13,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import com.itextpdf.text.*;
 
 public class Main {
@@ -28,8 +29,9 @@ public class Main {
 			System.out.println("Brochure de bateaux voyageurs");
 			lePDF.ecrireTexte("Brochure de bateaux voyageurs");
 			
-			Passerelle listBateaux = new Passerelle() ;
-			for( BateauVoyageur unBateau : listBateaux.chargerLesBatVoy() ){
+			Passerelle pass = new Passerelle() ;
+			ArrayList<BateauVoyageur> listBateaux = pass.chargerLesBatVoy() ;
+			for( BateauVoyageur unBateau : listBateaux ){
 				lePDF.ecrireTexte(System.getProperty("line.separator")) ;
 				lePDF.ecrireTexte(unBateau.getNom());
 				lePDF.ecrireTexte(System.getProperty("line.separator")) ;
@@ -38,6 +40,8 @@ public class Main {
 				lePDF.ecrireTexte(unBateau.toString());
 				lePDF.ecrireTexte(System.getProperty("line.separator")) ;
 			}
+	        Fenetre uneFen = new Fenetre(listBateaux) ;
+	    	uneFen.setVisible(true);
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
